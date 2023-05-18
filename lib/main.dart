@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'add_products.dart';
+import 'add_inventory.dart';
 
 void main() {
   runApp(const MyApp());
@@ -138,18 +138,20 @@ class MyApp extends StatelessWidget {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => addInventory(),
-              ),
-            );
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Color(0xFF222831),
-        ),
+        floatingActionButton: Builder(builder: (context) {
+          return FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddInventory(),
+                ),
+              );
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Color(0xFF222831),
+          );
+        }),
       ),
     );
   }
