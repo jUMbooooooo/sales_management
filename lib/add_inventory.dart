@@ -13,7 +13,12 @@ class AddInventory extends StatelessWidget {
         title: Text("在庫追加"),
         backgroundColor: Color(0xFF222831),
       ),
-      // body: ,
+      body: TextField(
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: '',
+        ),
+      ),
     );
   }
 }
