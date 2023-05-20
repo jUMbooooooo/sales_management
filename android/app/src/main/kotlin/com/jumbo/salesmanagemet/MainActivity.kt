@@ -1,4 +1,4 @@
-package com.example.sales_management_app
+package com.jumbo.salesmanagemet
 
 import io.flutter.embedding.android.FlutterActivity
 

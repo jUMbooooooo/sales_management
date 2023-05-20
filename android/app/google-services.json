@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "914173587363",
+    "project_id": "sales-management-1e397",
+    "storage_bucket": "sales-management-1e397.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914173587363:android:5854cd3d853b71efd2f416",
+        "android_client_info": {
+          "package_name": "com.example.sales_management_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCciwLwjwjshSak5CrAgYzdhPWwMbL_otc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914173587363:android:7b806876c7b4a9c8d2f416",
+        "android_client_info": {
+          "package_name": "com.jumbo.salesmanagemet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCciwLwjwjshSak5CrAgYzdhPWwMbL_otc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
