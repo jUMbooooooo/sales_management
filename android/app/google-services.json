@@ -29,6 +29,13 @@
             {
               "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "914173587363-9tl9hnnrpmmpceh9iip9sgol6qhedokt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.salesManagementApp"
+              }
             }
           ]
         }
@@ -58,6 +65,13 @@
             {
               "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "914173587363-9tl9hnnrpmmpceh9iip9sgol6qhedokt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.salesManagementApp"
+              }
             }
           ]
         }
