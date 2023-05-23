@@ -11,8 +11,16 @@ final selectedBrand = ValueNotifier<String?>(null);
 
 TextEditingController _controller = TextEditingController();
 
-class AddInventory extends StatelessWidget {
+class AddInventory extends StatefulWidget {
   const AddInventory({super.key});
+
+  @override
+  State<AddInventory> createState() => _AddInventoryState();
+}
+
+class _AddInventoryState extends State<AddInventory> {
+  // 入力された画像やテキストをデータとして持つ
+  String arrivalDate = '';
 
   @override
   Widget build(BuildContext context) {

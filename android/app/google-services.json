@@ -7,42 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:914173587363:android:5854cd3d853b71efd2f416",
-        "android_client_info": {
-          "package_name": "com.example.sales_management_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCciwLwjwjshSak5CrAgYzdhPWwMbL_otc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "914173587363-9tl9hnnrpmmpceh9iip9sgol6qhedokt.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.salesManagementApp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:914173587363:android:7b806876c7b4a9c8d2f416",
         "android_client_info": {
           "package_name": "com.jumbo.salesmanagemet"
@@ -50,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
+          "client_id": "914173587363-44oqqf3c8u8qs58jr6t9ufnetjflhf6g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jumbo.salesmanagemet",
+            "certificate_hash": "fd6bc4e67d90edec5e2b6d82daf689a96a627437"
+          }
+        },
+        {
+          "client_id": "914173587363-n7a3q44lhtm4djmjb9ucil1h65c4i0d7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -63,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "914173587363-qcabjkc5f8vuf11e1kim4ru2po2580m2.apps.googleusercontent.com",
+              "client_id": "914173587363-n7a3q44lhtm4djmjb9ucil1h65c4i0d7.apps.googleusercontent.com",
               "client_type": 3
             },
             {
