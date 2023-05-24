@@ -1,9 +1,85 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:sales_management_app/firebase_options.dart';
 import 'add_inventory.dart';
-import 'sign_in_page.dart';
-import 'main.dart';
+
+List<Map<String, String>> products = [
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+  {
+    'controlNumber': '12345678', //管理番号
+    'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
+    'brandName': 'LOUIS VUITTON', //ブランド名
+    'imageUrl':
+        'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
+  },
+];
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});
