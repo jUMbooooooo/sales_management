@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class InventoryItem {
-  InventoryItem({
+class Inventory {
+  Inventory({
     required this.image,
     required this.date,
     required this.id,
@@ -22,11 +22,11 @@ class InventoryItem {
     required this.reference,
   });
 
-  factory InventoryItem.fromFirestore(
+  factory Inventory.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final map = snapshot.data()!;
 
-    return InventoryItem(
+    return Inventory(
       image: map['image'],
       date: map['date'],
       id: map['id'],
