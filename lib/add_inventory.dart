@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 // フォームの状態を管理するためのキー
 final _formKey = GlobalKey<FormState>();
@@ -9,7 +11,12 @@ final _formKey = GlobalKey<FormState>();
 List<String> brands = ['LOUIS VUITTON', 'CHANEL', 'GUCCI', 'PRADA', 'HERMES'];
 final selectedBrand = ValueNotifier<String?>(null);
 
-TextEditingController _controller = TextEditingController();
+TextEditingController _datecontroller = TextEditingController();
+TextEditingController _idController = TextEditingController();
+TextEditingController _nameController = TextEditingController();
+TextEditingController _buyingPriceController = TextEditingController();
+TextEditingController _otherCostsController = TextEditingController();
+TextEditingController _supplierController = TextEditingController();
 
 class AddInventory extends StatefulWidget {
   const AddInventory({super.key});
@@ -77,10 +84,10 @@ class _AddInventoryState extends State<AddInventory> {
                     if (date != null) {
                       String formattedDate = DateFormat('yyyy-MM-dd')
                           .format(date); // 日付を適切な形式にフォーマット
-                      _controller.text = formattedDate; // テキストフィールドに日付を設定
+                      _datecontroller.text = formattedDate; // テキストフィールドに日付を設定
                     }
                   },
-                  controller: _controller,
+                  controller: _datecontroller,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '日付を入力してください';
@@ -115,6 +122,8 @@ class _AddInventoryState extends State<AddInventory> {
                     ),
                   ),
 
+                  keyboardType: TextInputType.emailAddress,
+
                   // 半角英数字のみに制限
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
@@ -125,6 +134,7 @@ class _AddInventoryState extends State<AddInventory> {
                     }
                     return null;
                   },
+                  controller: _idController,
                 ),
               ),
               Padding(
@@ -231,6 +241,7 @@ class _AddInventoryState extends State<AddInventory> {
                     }
                     return null;
                   },
+                  controller: _nameController,
                 ),
               ),
               Padding(
@@ -269,6 +280,7 @@ class _AddInventoryState extends State<AddInventory> {
                     }
                     return null;
                   },
+                  controller: _buyingPriceController,
                 ),
               ),
               Padding(
@@ -307,6 +319,7 @@ class _AddInventoryState extends State<AddInventory> {
                     }
                     return null;
                   },
+                  controller: _otherCostsController,
                 ),
               ),
               Padding(
@@ -340,15 +353,32 @@ class _AddInventoryState extends State<AddInventory> {
                     }
                     return null;
                   },
+                  controller: _supplierController,
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     // フォームが有効ならば何かを行う
                     // 例えば、データをサーバに送信するなど
                     ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(content: Text('データを処理中')));
+
+                    // FIrestoreに追加するデータ
+                    Map<String, dynamic> data = <String, dynamic>{
+                      "date": _datecontroller.text,
+                      "id": _idController.text,
+                      "brand": selectedBrand.value,
+                      "name": _nameController.text,
+                      "buyingPrice": _buyingPriceController.text,
+                      "otherCosts": _otherCostsController.text,
+                      "supplier": _supplierController.text,
+                    };
+
+                    // Firestoreにデータを追加
+                    await FirebaseFirestore.instance
+                        .collection('inventory')
+                        .add(data);
                   }
                 },
                 child: Text('追加する'),

@@ -35,11 +35,15 @@ class _SignInPageState extends State<SignInPage> {
       ),
       body: Center(
         child: ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Color(0xFF222831)),
+          ),
           child: const Text('Googleサインイン'),
           onPressed: () async {
             await signInWithGoogle();
             // ログインが成功すると FirebaseAuth.instance.currentUser にログイン中のユーザーの情報が入ります
-            print(FirebaseAuth.instance.currentUser?.displayName);
+            // print(FirebaseAuth.instance.currentUser?.displayName);
 
             if (mounted) {
               Navigator.of(context).pushAndRemoveUntil(

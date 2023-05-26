@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Inventory {
   Inventory({
-    required this.image,
+    // required this.image,
     required this.date,
     required this.id,
     required this.brand,
@@ -27,7 +27,7 @@ class Inventory {
     final map = snapshot.data()!;
 
     return Inventory(
-      image: map['image'],
+      // image: map['image'],
       date: map['date'],
       id: map['id'],
       brand: map['brand'],
@@ -49,7 +49,7 @@ class Inventory {
 
   Map<String, dynamic> toMap() {
     return {
-      'image': image,
+      // 'image': image,
       'date': date,
       'id': id,
       'brand': brand,
@@ -68,7 +68,7 @@ class Inventory {
     };
   }
 
-  late String image; //商品画像(ファイルのパスを指定してpick)
+  // late String image; //商品画像(ファイルのパスを指定してpick)
   late Timestamp date; //仕入れ日
   late String id; //管理番号
   late List<DropdownMenuItem<String>> brand; //ブランド名
