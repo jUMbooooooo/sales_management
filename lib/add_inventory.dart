@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:sales_management_app/main.dart';
+import 'inventory_class.dart';
 
 // フォームの状態を管理するためのキー
 final _formKey = GlobalKey<FormState>();
@@ -27,7 +28,6 @@ class AddInventory extends StatefulWidget {
 
 class _AddInventoryState extends State<AddInventory> {
   // 入力された画像やテキストをデータとして持つ
-  String arrivalDate = '';
 
   @override
   Widget build(BuildContext context) {
@@ -364,21 +364,27 @@ class _AddInventoryState extends State<AddInventory> {
                     ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(content: Text('データを処理中')));
 
+                    DateTime dateTime =
+                        DateFormat('yyyy-MM-dd').parse(_datecontroller.text);
+
+                    Timestamp timestamp = Timestamp.fromDate(dateTime);
+
+                    final newDocumentReference = inventoriesReference.doc();
+
                     // FIrestoreに追加するデータ
-                    Map<String, dynamic> data = <String, dynamic>{
-                      "date": _datecontroller.text,
-                      "id": _idController.text,
-                      "brand": selectedBrand.value,
-                      "name": _nameController.text,
-                      "buyingPrice": _buyingPriceController.text,
-                      "otherCosts": _otherCostsController.text,
-                      "supplier": _supplierController.text,
-                    };
+                    Inventory newInventory = Inventory(
+                      date: timestamp,
+                      id: _idController.text,
+                      brand: selectedBrand.value!,
+                      name: _nameController.text,
+                      buyingPrice: double.parse(_buyingPriceController.text),
+                      otherCosts: double.parse(_otherCostsController.text),
+                      supplier: _supplierController.text,
+                      reference: newDocumentReference,
+                    );
 
                     // Firestoreにデータを追加
-                    await FirebaseFirestore.instance
-                        .collection('inventory')
-                        .add(data);
+                    await inventoriesReference.add(newInventory);
                   }
                 },
                 child: Text('追加する'),
