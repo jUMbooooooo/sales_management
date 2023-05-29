@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sales_management_app/inventory_class.dart';
+import 'package:sales_management_app/main.dart';
 import 'add_inventory.dart';
 
 // List<Map<String, String>> products = [
@@ -91,28 +94,47 @@ class InventoryPage extends StatefulWidget {
 class _InventoryPageState extends State<InventoryPage> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("在庫管理アプリ"),
-          backgroundColor: Color(0xFF222831),
-        ),
-        floatingActionButton: Builder(
-          builder: (context) {
-            return FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddInventory(),
-                  ),
-                );
-              },
-              child: Icon(Icons.add),
-              backgroundColor: Color(0xFF222831),
-            );
-          },
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("在庫管理アプリ"),
+        backgroundColor: Color(0xFF222831),
+      ),
+      body: StreamBuilder<QuerySnapshot<Inventory>>(
+        stream: inventoriesReference.snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text('エラーが発生しました');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+
+          final docs = snapshot.data?.docs ?? [];
+          return ListView.builder(
+            itemCount: docs.length,
+            itemBuilder: (content, index) {
+              final doc = docs[index].data();
+              return Text(doc.name);
+            },
+          );
+        },
+      ),
+      floatingActionButton: Builder(
+        builder: (context) {
+          return FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddInventory(),
+                ),
+              );
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Color(0xFF222831),
+          );
+        },
       ),
     );
   }
@@ -188,3 +210,4 @@ class _InventoryPageState extends State<InventoryPage> {
 //     );
 //   }
 // }
+

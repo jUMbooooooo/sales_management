@@ -25,6 +25,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//このwithConverterではinventoriesというコレクションにInventoryが入ることが想定されている
+//しかし、Firebaseを確認するとinventoryというコレクションにデータが入っている
+//原因は、add_inventory.dartにあるonpressedの中身
+//onpressedの中身でfirestoreDatabaseに飛ばすときにinventoryというクラスで送っている
 final inventoriesReference = FirebaseFirestore.instance
     .collection('inventories')
     .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
