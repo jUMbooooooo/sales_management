@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sales_management_app/main.dart';
 import 'add_inventory.dart';
+import 'inventory_class.dart';
 
 // List<Map<String, String>> products = [
 //   {
@@ -91,32 +94,41 @@ class InventoryPage extends StatefulWidget {
 class _InventoryPageState extends State<InventoryPage> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("在庫管理アプリ"),
-          backgroundColor: Color(0xFF222831),
-        ),
-        floatingActionButton: Builder(
-          builder: (context) {
-            return FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddInventory(),
-                  ),
-                );
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('在庫管理'),
+        backgroundColor: Color(0xFF222831),
+      ),
+      body: StreamBuilder<QuerySnapshot<Inventory>>(
+          stream: inventoriesReference.snapshots(),
+          builder: (context, snapshot) {
+            final docs = snapshot.data?.docs ?? [];
+            return ListView.builder(
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                final invetory = docs[index].data();
+                return Text(invetory.name as String);
               },
-              child: Icon(Icons.add),
-              backgroundColor: Color(0xFF222831),
+            );
+          }),
+      floatingActionButton: Builder(builder: (context) {
+        return FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddInventory(),
+              ),
             );
           },
-        ),
-      ),
+          child: Icon(Icons.add),
+          backgroundColor: Color(0xFF222831),
+        );
+      }),
     );
   }
 }
+
 
 
 // class _InventoryPageState extends State<InventoryPage> {
