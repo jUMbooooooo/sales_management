@@ -84,6 +84,8 @@ import 'add_inventory.dart';
 //   },
 // ];
 
+// 在庫情報を表示するページ
+// 常に在庫は入れ替わるので、StatefulWidget
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});
 

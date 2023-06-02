@@ -5,6 +5,7 @@ import 'package:sales_management_app/firebase_options.dart';
 import 'package:sales_management_app/inventory_class.dart';
 import 'sign_in_page.dart';
 
+// Firebaseの初期化
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -13,6 +14,8 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+// MyAppをビルド
+// SignInPageを表示させている
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -29,6 +32,7 @@ class MyApp extends StatelessWidget {
 //しかし、Firebaseを確認するとinventoryというコレクションにデータが入っている
 //原因は、add_inventory.dartにあるonpressedの中身
 //onpressedの中身でfirestoreDatabaseに飛ばすときにinventoryというクラスで送っている
+// withCOnverterを使って、Firestoreへの接続の窓口をコレクションにしている
 final inventoriesReference = FirebaseFirestore.instance
     .collection('inventories')
     .withConverter<Inventory>(fromFirestore: ((snapshot, _) {

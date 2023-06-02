@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'inventory_page.dart';
 
+//SignInPageのクラス(設計図)
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -25,9 +26,12 @@ class _SignInPageState extends State<SignInPage> {
 
   //   await FirebaseAuth.instance.signInWithCredential(credential);
   // }
+
+  // Firebaseの認証(非同期処理)
   Future<UserCredential?> signInWithGoogle() async {
     // GoogleSignIn をして得られた情報を Firebase と関連づけることをやっています。
-    final googleUser = await GoogleSignIn(scopes: ['prfile', 'email']).signIn();
+    final googleUser =
+        await GoogleSignIn(scopes: ['profile', 'email']).signIn();
     final googleAuth = await googleUser?.authentication;
 
     final credential = GoogleAuthProvider.credential(
