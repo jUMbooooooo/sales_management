@@ -12,26 +12,11 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  // Future<void> signInWithGoogle() async {
-  //   // GoogleSignIn をして得られた情報を Firebase と関連づけることをやっています。
-  //   final googleUser =
-  //       await GoogleSignIn(scopes: ['profile', 'email']).signIn();
-
-  //   final googleAuth = await googleUser?.authentication;
-
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth?.accessToken,
-  //     idToken: googleAuth?.idToken,
-  //   );
-
-  //   await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
-
-  // Firebaseの認証(非同期処理)
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     // GoogleSignIn をして得られた情報を Firebase と関連づけることをやっています。
     final googleUser =
         await GoogleSignIn(scopes: ['profile', 'email']).signIn();
+
     final googleAuth = await googleUser?.authentication;
 
     final credential = GoogleAuthProvider.credential(
@@ -39,9 +24,24 @@ class _SignInPageState extends State<SignInPage> {
       idToken: googleAuth?.idToken,
     );
 
-    //ここでFirebaseの認証結果を返す
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    await FirebaseAuth.instance.signInWithCredential(credential);
   }
+
+  // // Firebaseの認証(非同期処理)
+  // Future<UserCredential?> signInWithGoogle() async {
+  //   // GoogleSignIn をして得られた情報を Firebase と関連づけることをやっています。
+  //   final googleUser =
+  //       await GoogleSignIn(scopes: ['profile', 'email']).signIn();
+  //   final googleAuth = await googleUser?.authentication;
+
+  //   final credential = GoogleAuthProvider.credential(
+  //     accessToken: googleAuth?.accessToken,
+  //     idToken: googleAuth?.idToken,
+  //   );
+
+  //   //ここでFirebaseの認証結果を返す
+  //   return await FirebaseAuth.instance.signInWithCredential(credential);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +58,11 @@ class _SignInPageState extends State<SignInPage> {
           ),
           child: const Text('Googleサインイン'),
           onPressed: () async {
-            final userCredential = await signInWithGoogle();
+            await signInWithGoogle();
             // ログインが成功すると FirebaseAuth.instance.currentUser にログイン中のユーザーの情報が入ります
             // print(FirebaseAuth.instance.currentUser?.displayName);
 
-            if (userCredential != null && mounted) {
+            if (mounted) {
               // ユーザーが正常に認証され、ユーザー情報が得られたページへ遷移
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (cotext) {
