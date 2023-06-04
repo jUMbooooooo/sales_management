@@ -8,10 +8,12 @@ import 'inventory_class.dart';
 // フォームの状態を管理するためのキー
 final _formKey = GlobalKey<FormState>();
 
-//ブランド名のプルダウンリストの中身
+// ブランド名のプルダウンリストの中身
 List<String> brands = ['LOUIS VUITTON', 'CHANEL', 'GUCCI', 'PRADA', 'HERMES'];
 final selectedBrand = ValueNotifier<String?>(null);
 
+// TextFormFieldに入力されるテキストを操作するためのWidget
+// for getting the corrent text, updating the text, listening for change
 TextEditingController _datecontroller = TextEditingController();
 TextEditingController _idController = TextEditingController();
 TextEditingController _nameController = TextEditingController();
@@ -19,6 +21,8 @@ TextEditingController _buyingPriceController = TextEditingController();
 TextEditingController _otherCostsController = TextEditingController();
 TextEditingController _supplierController = TextEditingController();
 
+// 在庫追加のためのクラス(設計図)の作成
+// なぜStatefulWidgetがいいのかわかっていない(未解決)
 class AddInventory extends StatefulWidget {
   const AddInventory({super.key});
 
@@ -26,21 +30,22 @@ class AddInventory extends StatefulWidget {
   State<AddInventory> createState() => _AddInventoryState();
 }
 
+// 在庫追加クラスの状態管理
 class _AddInventoryState extends State<AddInventory> {
   // 入力された画像やテキストをデータとして持つ
 
   @override
   Widget build(BuildContext context) {
     // return MaterialApp
-    // 新しい画面を作成するたびに新しいMaterialAppを作成するのは適切ではない
+    // 新しい画面を作成するたびに改めて新しいMaterialAppを作成するのは適切ではない
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text("在庫追加"),
         backgroundColor: Color(0xFF222831),
       ),
+      //TextFormFieldにキーボードが重なった場合のエラーを防ぐ(スクロール可能にする)
       body: SingleChildScrollView(
-        //TextFormFieldにキーボードが重なった場合のエラーを防ぐ(スクロール可能にする)
         child: Form(
           key: _formKey,
           child: Column(
@@ -80,7 +85,7 @@ class _AddInventoryState extends State<AddInventory> {
                       lastDate: DateTime(2100),
                     );
 
-                    // 日付が選択された場合、その日付をテキストフィールドに設定
+                    // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
                     if (date != null) {
                       String formattedDate = DateFormat('yyyy-MM-dd')
                           .format(date); // 日付を適切な形式にフォーマット
