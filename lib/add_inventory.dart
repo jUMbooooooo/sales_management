@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sales_management_app/main.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'inventory_class.dart';
 
 // フォームの状態を管理するためのキー
@@ -20,20 +22,19 @@ TextEditingController _nameController = TextEditingController();
 TextEditingController _buyingPriceController = TextEditingController();
 TextEditingController _otherCostsController = TextEditingController();
 TextEditingController _supplierController = TextEditingController();
+// TextEditingController _statusController = TextEditingController();
+final _statusController = ValueNotifier<InventoryStatus?>(null);
 
 // 在庫追加のためのクラス(設計図)の作成
 // なぜStatefulWidgetがいいのかわかっていない(未解決)
-class AddInventory extends StatefulWidget {
+class AddInventory extends ConsumerStatefulWidget {
   const AddInventory({super.key});
 
   @override
-  State<AddInventory> createState() => _AddInventoryState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AddInventoryState();
 }
 
-// 在庫追加クラスの状態管理
-class _AddInventoryState extends State<AddInventory> {
-  // 入力された画像やテキストをデータとして持つ
-
+class _AddInventoryState extends ConsumerState<AddInventory> {
   @override
   Widget build(BuildContext context) {
     // return MaterialApp
@@ -361,11 +362,47 @@ class _AddInventoryState extends State<AddInventory> {
                   controller: _supplierController,
                 ),
               ),
+              Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButtonFormField<InventoryStatus>(
+                    decoration: InputDecoration(
+                      labelStyle: TextStyle(
+                        fontSize: 15,
+                        color: Colors.grey,
+                      ),
+                      labelText: '状態',
+                    ),
+                    validator: (value) {
+                      if (value == null) {
+                        return '商品の状態を入力してください';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      _statusController.value = value;
+                    },
+                    items: InventoryStatus.values.map((InventoryStatus status) {
+                      return DropdownMenuItem<InventoryStatus>(
+                        value: status,
+                        child: Text(status.toString().split('.').last),
+                      );
+                    }).toList(),
+                  )),
               ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Color(0xFF222831)),
+                ),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     // フォームが有効ならば何かを行う
                     // 例えば、データをサーバに送信するなど
+                    // final user = FirebaseAuth.instance.currentUser!;
+
+                    // final posterId = user.uid;
+                    // final posterName = user.displayName!;
+                    // final posterImageUrl = user.photoURL!;
+
                     ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(content: Text('データを処理中')));
 
@@ -386,6 +423,7 @@ class _AddInventoryState extends State<AddInventory> {
                       otherCosts: double.parse(_otherCostsController.text),
                       supplier: _supplierController.text,
                       reference: newDocumentReference,
+                      status: _statusController.value!,
                     );
 
                     // Firestoreにデータを追加

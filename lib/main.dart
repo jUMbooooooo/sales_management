@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales_management_app/firebase_options.dart';
 import 'package:sales_management_app/inventory_class.dart';
 import 'sign_in_page.dart';
@@ -11,7 +12,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.android,
   );
-  runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 // MyAppをビルド

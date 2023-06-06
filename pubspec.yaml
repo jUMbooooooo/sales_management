@@ -44,6 +44,8 @@ dependencies:
   file_picker: ^5.3.0
   googleapis: ^11.1.0
   googleapis_auth: ^1.4.0
+  flutter_riverpod: ^2.3.6
+  state_notifier: ^0.7.2+1
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+enum InventoryStatus {
+  notListed, // 出品前
+  listed, // 出品中
+  beforeShipping, // 発送前
+  shipped, // 発送済
+  transactionComplete, // 取引完了
+}
 
 class Inventory {
   Inventory({
@@ -11,6 +18,7 @@ class Inventory {
     required this.buyingPrice,
     required this.otherCosts,
     required this.supplier,
+    required this.status,
     // required this.inspection,
     // required this.purchased,
     // required this.purchasedDate,
@@ -21,6 +29,8 @@ class Inventory {
     // required this.revenue,
     required this.reference,
   });
+
+  InventoryStatus status;
 
   factory Inventory.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -43,6 +53,8 @@ class Inventory {
       // shippingCost: map['shippingCost'],
       // salesDate: map['salesDate'],
       // revenue: map['revenue'],
+      status: InventoryStatus.values.firstWhere(
+          (e) => e.toString() == 'InventoryStatus.${map['status']}'),
       reference: snapshot.reference,
     );
   }
@@ -65,6 +77,7 @@ class Inventory {
       // 'shippingCost': shippingCost,
       // 'salesDate': salesDate,
       // 'revenue': revenue,
+      'status': status.toString().split('.').last,
     };
   }
 
