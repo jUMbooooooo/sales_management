@@ -1,11 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// 在庫の状態を管理するenum関数
 enum InventoryStatus {
   notListed, // 出品前
   listed, // 出品中
   beforeShipping, // 発送前
   shipped, // 発送済
   transactionComplete, // 取引完了
+}
+
+// 在庫の状態を日本語で表示するためのヘルパー関数
+String inventoryStatusToJapanese(InventoryStatus status) {
+  switch (status) {
+    case InventoryStatus.notListed:
+      return '出品前';
+    case InventoryStatus.listed:
+      return '出品中';
+    case InventoryStatus.beforeShipping:
+      return '発送前';
+    case InventoryStatus.shipped:
+      return '発送済';
+    case InventoryStatus.transactionComplete:
+      return '取引完了';
+  }
 }
 
 class Inventory {

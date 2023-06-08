@@ -1,7 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:sales_management_app/inventory_class.dart';
-import 'package:sales_management_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'add_inventory.dart';
@@ -29,7 +26,47 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           itemCount: data.docs.length,
           itemBuilder: (context, index) {
             final doc = data.docs[index].data();
-            return Text(doc.name);
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    doc.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 24.0,
+                    ),
+                  ),
+                  const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
+                  Row(
+                    children: [
+                      Text(
+                        doc.id,
+                        style: const TextStyle(fontSize: 15.0),
+                      ),
+                      const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.0)),
+                      Text(
+                        doc.brand,
+                        style: const TextStyle(fontSize: 15.0),
+                      ),
+                    ],
+                  ),
+                  const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
+                  Text(
+                    '${doc.buyingPrice.toInt()} 円',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                ],
+              ),
+            );
+            // return ListTile(
+            //   // leading: ,
+            //   title: Text(doc.name),
+            //   subtitle: Text(doc.id),
+            //   // trailing: ,
+            // );
           },
         );
       }, error: (_, __) {

@@ -46,6 +46,7 @@ dependencies:
   googleapis_auth: ^1.4.0
   flutter_riverpod: ^2.3.6
   state_notifier: ^0.7.2+1
+  firebase_storage: ^11.2.2
 
 dev_dependencies:
   flutter_test:
