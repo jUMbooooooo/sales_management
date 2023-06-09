@@ -1,5 +1,29 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+// 在庫の状態を管理するenum関数
+enum InventoryStatus {
+  notListed, // 出品前
+  listed, // 出品中
+  beforeShipping, // 発送前
+  shipped, // 発送済
+  transactionComplete, // 取引完了
+}
+
+// 在庫の状態を日本語で表示するためのヘルパー関数
+String inventoryStatusToJapanese(InventoryStatus status) {
+  switch (status) {
+    case InventoryStatus.notListed:
+      return '出品前';
+    case InventoryStatus.listed:
+      return '出品中';
+    case InventoryStatus.beforeShipping:
+      return '発送前';
+    case InventoryStatus.shipped:
+      return '発送済';
+    case InventoryStatus.transactionComplete:
+      return '取引完了';
+  }
+}
 
 class Inventory {
   Inventory({
@@ -11,6 +35,7 @@ class Inventory {
     required this.buyingPrice,
     required this.otherCosts,
     required this.supplier,
+    required this.status,
     // required this.inspection,
     // required this.purchased,
     // required this.purchasedDate,
@@ -21,6 +46,8 @@ class Inventory {
     // required this.revenue,
     required this.reference,
   });
+
+  InventoryStatus status;
 
   factory Inventory.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -43,6 +70,8 @@ class Inventory {
       // shippingCost: map['shippingCost'],
       // salesDate: map['salesDate'],
       // revenue: map['revenue'],
+      status: InventoryStatus.values.firstWhere(
+          (e) => e.toString() == 'InventoryStatus.${map['status']}'),
       reference: snapshot.reference,
     );
   }
@@ -65,6 +94,7 @@ class Inventory {
       // 'shippingCost': shippingCost,
       // 'salesDate': salesDate,
       // 'revenue': revenue,
+      'status': status.toString().split('.').last,
     };
   }
 

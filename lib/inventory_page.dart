@@ -1,99 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:sales_management_app/inventory_class.dart';
-import 'package:sales_management_app/main.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'add_inventory.dart';
-
-// List<Map<String, String>> products = [
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-//   {
-//     'controlNumber': '12345678', //管理番号
-//     'productName': '【超美品】ルイヴィトン ブラスレ・LV チェーンリンクス ブレスレット シルバー', //商品名
-//     'brandName': 'LOUIS VUITTON', //ブランド名
-//     'imageUrl':
-//         'https://jp.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-%E3%82%A2%E3%83%AB%E3%83%9E-bb-%E3%83%A2%E3%83%8E%E3%82%B0%E3%83%A9%E3%83%A0-%E3%83%90%E3%83%83%E3%82%B0--M53152_PM2_Front%20view.png?wid=1080&hei=1080' //画像URL
-//   },
-// ];
 
 // 在庫情報を表示するページ
 // 常に在庫は入れ替わるので、StatefulWidget
-class InventoryPage extends StatefulWidget {
+
+class InventoryPage extends ConsumerStatefulWidget {
   const InventoryPage({super.key});
 
   @override
-  State<InventoryPage> createState() => _InventoryPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _InventoryPageState();
 }
 
-class _InventoryPageState extends State<InventoryPage> {
+class _InventoryPageState extends ConsumerState<InventoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,27 +21,84 @@ class _InventoryPageState extends State<InventoryPage> {
         title: Text("在庫管理アプリ"),
         backgroundColor: Color(0xFF222831),
       ),
-      body: StreamBuilder<QuerySnapshot<Inventory>>(
-        stream: inventoriesReference.snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text('エラーが発生しました');
-          }
+      body: ref.watch(inventoriesProvider).when(data: (data) {
+        return ListView.builder(
+          itemCount: data.docs.length,
+          itemBuilder: (context, index) {
+            final doc = data.docs[index].data();
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    doc.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 24.0,
+                    ),
+                  ),
+                  const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
+                  Row(
+                    children: [
+                      Text(
+                        doc.id,
+                        style: const TextStyle(fontSize: 15.0),
+                      ),
+                      const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.0)),
+                      Text(
+                        doc.brand,
+                        style: const TextStyle(fontSize: 15.0),
+                      ),
+                    ],
+                  ),
+                  const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
+                  Text(
+                    '${doc.buyingPrice.toInt()} 円',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                ],
+              ),
+            );
+            // return ListTile(
+            //   // leading: ,
+            //   title: Text(doc.name),
+            //   subtitle: Text(doc.id),
+            //   // trailing: ,
+            // );
+          },
+        );
+      }, error: (_, __) {
+        return const Center(
+          child: Text('エラーが出ました。'),
+        );
+      }, loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }),
+      // StreamBuilder<QuerySnapshot<Inventory>>(
+      //   stream: inventoriesReference.snapshots(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.hasError) {
+      //       return Text('エラーが発生しました');
+      //     }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          }
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return CircularProgressIndicator();
+      //     }
 
-          final docs = snapshot.data?.docs ?? [];
-          return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (content, index) {
-              final doc = docs[index].data();
-              return Text(doc.name);
-            },
-          );
-        },
-      ),
+      //     final docs = snapshot.data?.docs ?? [];
+      //     return ListView.builder(
+      //       itemCount: docs.length,
+      //       itemBuilder: (content, index) {
+      //         final doc = docs[index].data();
+      //         return Text(doc.name);
+      //       },
+      //     );
+      //   },
+      // ),
       floatingActionButton: Builder(
         builder: (context) {
           return FloatingActionButton(
