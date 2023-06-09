@@ -30,7 +30,7 @@ class AddInventory extends StatefulWidget {
   State<AddInventory> createState() => _AddInventoryState();
 }
 
-// 在庫追加クラスの状態管理
+// 在庫追加クラス
 class _AddInventoryState extends State<AddInventory> {
   // 入力された画像やテキストをデータとして持つ
 
@@ -184,36 +184,6 @@ class _AddInventoryState extends State<AddInventory> {
                     return null;
                   },
                 ),
-                // child: TextFormField(
-                //   decoration: InputDecoration(
-                //     focusedBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(16),
-                //       borderSide: const BorderSide(
-                //         color: Colors.black,
-                //         width: 2.0,
-                //       ),
-                //     ),
-                //     labelStyle: TextStyle(
-                //       fontSize: 15,
-                //       color: Colors.grey,
-                //     ),
-                //     labelText: 'ブランド名',
-                //     floatingLabelStyle: const TextStyle(fontSize: 12),
-                //     enabledBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(16),
-                //       borderSide: BorderSide(
-                //         color: Colors.black,
-                //         width: 1.0,
-                //       ),
-                //     ),
-                //   ),
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'ブランド名を入力してください';
-                //     }
-                //     return null;
-                //   },
-                // ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
