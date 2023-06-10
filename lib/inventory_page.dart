@@ -29,45 +29,84 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 80,
-                    width: 80,
-                    child: Image.network(doc.imageUrl),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 70,
+                      width: 70,
+                      child: Image.network(doc.imageUrl),
+                    ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        doc.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 24.0,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              doc.id,
+                              style: const TextStyle(fontSize: 13.0),
+                            ),
+                            const Padding(
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: 15.0)),
+                            Text(
+                              doc.brand,
+                              style: const TextStyle(fontSize: 13.0),
+                            ),
+                          ],
                         ),
-                      ),
-                      const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 2.0)),
-                      Row(
-                        children: [
-                          Text(
-                            doc.id,
-                            style: const TextStyle(fontSize: 15.0),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 4.0)),
+                        Text(
+                          doc.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 17.0,
                           ),
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 15.0)),
-                          Text(
-                            doc.brand,
-                            style: const TextStyle(fontSize: 15.0),
-                          ),
-                        ],
-                      ),
-                      const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 1.0)),
-                      Text(
-                        '${doc.buyingPrice.toInt()} 円',
-                        style: const TextStyle(fontSize: 18.0),
-                      ),
-                    ],
+                        ),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 3.0)),
+                        Row(
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  '仕入れ価格',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 11.0,
+                                  ),
+                                ),
+                                Text(
+                                  '${doc.buyingPrice.toInt()} 円',
+                                  style: const TextStyle(fontSize: 12.0),
+                                ),
+                              ],
+                            ),
+                            // Padding(padding: EdgeInsets.all(8.0)),
+                            // Column(
+                            //   children: [
+                            //     Text(
+                            //       '販売価格',
+                            //       style: const TextStyle(
+                            //         fontWeight: FontWeight.w500,
+                            //         fontSize: 11.0,
+                            //       ),
+                            //     ),
+                            //     Text(
+                            //       '${doc.buyingPrice.toInt()} 円',
+                            //       style: const TextStyle(fontSize: 12.0),
+                            //     ),
+                            //   ],
+                            // ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
