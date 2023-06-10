@@ -28,35 +28,46 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             final doc = data.docs[index].data();
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Text(
-                    doc.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 24.0,
-                    ),
+                  SizedBox(
+                    height: 80,
+                    width: 80,
+                    child: Image.network(doc.imageUrl),
                   ),
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        doc.id,
-                        style: const TextStyle(fontSize: 15.0),
+                        doc.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 24.0,
+                        ),
                       ),
                       const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.0)),
+                          padding: EdgeInsets.symmetric(vertical: 2.0)),
+                      Row(
+                        children: [
+                          Text(
+                            doc.id,
+                            style: const TextStyle(fontSize: 15.0),
+                          ),
+                          const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 15.0)),
+                          Text(
+                            doc.brand,
+                            style: const TextStyle(fontSize: 15.0),
+                          ),
+                        ],
+                      ),
+                      const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 1.0)),
                       Text(
-                        doc.brand,
-                        style: const TextStyle(fontSize: 15.0),
+                        '${doc.buyingPrice.toInt()} 円',
+                        style: const TextStyle(fontSize: 18.0),
                       ),
                     ],
-                  ),
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-                  Text(
-                    '${doc.buyingPrice.toInt()} 円',
-                    style: const TextStyle(fontSize: 18.0),
                   ),
                 ],
               ),

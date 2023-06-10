@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +9,6 @@ import 'package:sales_management_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'upload_image_to_storage.dart';
 import 'inventory_class.dart';
 
 // フォームの状態を管理するためのキー
@@ -15,7 +17,7 @@ final _formKey = GlobalKey<FormState>();
 // ブランド名のプルダウンリストの中身
 List<String> brands = ['LOUIS VUITTON', 'CHANEL', 'GUCCI', 'PRADA', 'HERMES'];
 final _selectedBrand = ValueNotifier<String?>(null);
-final _imageController = ValueNotifier<String?>(null);
+// final _imageController = ValueNotifier<String?>(null);
 // TextFormFieldに入力されるテキストを操作するためのWidget
 // for getting the corrent text, updating the text, listening for change
 TextEditingController _datecontroller = TextEditingController();
@@ -24,6 +26,12 @@ TextEditingController _nameController = TextEditingController();
 TextEditingController _buyingPriceController = TextEditingController();
 TextEditingController _otherCostsController = TextEditingController();
 TextEditingController _supplierController = TextEditingController();
+
+// 画像選択コードに必要なコントローラーなど
+CollectionReference _reference =
+    FirebaseFirestore.instance.collection('shopping_list');
+
+String imageUrl = '';
 final _statusController = ValueNotifier<InventoryStatus?>(null);
 
 // 在庫追加のためのクラス(設計図)の作成
@@ -52,6 +60,42 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
           key: _formKey,
           child: Column(
             children: <Widget>[
+              IconButton(
+                onPressed: () async {
+                  // ステップ1 image_pickerを使って、画像を選択
+
+                  ImagePicker imagePicker = ImagePicker();
+
+                  // XFileは　クロスプラットフォームでファイルを扱うためのクラス
+                  // Fileに比べて扱える機能が制限されている（クロスプラットフォームに合わせているため）
+                  XFile? file =
+                      await imagePicker.pickImage(source: ImageSource.gallery);
+                  print('${file?.path}');
+
+                  if (file == null) return;
+
+                  // ファイル名として、現在日時をミリ秒に直して文字列で使う
+                  // これで、一意にファイル名を指定することができる
+                  String uniqueFileName =
+                      DateTime.now().millisecondsSinceEpoch.toString();
+
+                  // ステップ2 Firebase Storageに画像をアップロードする
+
+                  Reference referenceRoot = FirebaseStorage.instance.ref();
+                  Reference referenceDirImages = referenceRoot.child('images');
+
+                  Reference referenceImageToUpload =
+                      referenceDirImages.child(uniqueFileName);
+
+                  try {
+                    // 画像をアップロード
+                    await referenceImageToUpload.putFile(File(file.path));
+
+                    imageUrl = await referenceImageToUpload.getDownloadURL();
+                  } catch (error) {}
+                },
+                icon: Icon(Icons.camera_alt),
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -436,7 +480,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
 
                       // FIrestoreに追加するデータ
                       Inventory newInventory = Inventory(
-                        // image: image,
+                        imageUrl: imageUrl,
                         date: timestamp,
                         id: _idController.text,
                         brand: _selectedBrand.value!,
