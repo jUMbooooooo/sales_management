@@ -48,13 +48,13 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Googleサインイン'),
-        backgroundColor: Color(0xFF222831),
+        backgroundColor: const Color(0xFF222831),
       ),
       body: Center(
         child: ElevatedButton(
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all<Color>(Color(0xFF222831)),
+                MaterialStateProperty.all<Color>(const Color(0xFF222831)),
           ),
           child: const Text('Googleサインイン'),
           onPressed: () async {

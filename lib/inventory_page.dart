@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sales_management_app/provider/inventory_provider.dart';
+import 'package:sales_management_app/inventory_class.dart';
+// import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'add_inventory.dart';
+import 'inventory_listview.dart';
 
 // 在庫情報を表示するページ
 // 常に在庫は入れ替わるので、StatefulWidget
@@ -16,154 +18,177 @@ class InventoryPage extends ConsumerStatefulWidget {
 class _InventoryPageState extends ConsumerState<InventoryPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("在庫管理アプリ"),
-        backgroundColor: Color(0xFF222831),
-      ),
-      body: ref.watch(inventoriesProvider).when(data: (data) {
-        return ListView.builder(
-          itemCount: data.docs.length,
-          itemBuilder: (context, index) {
-            final doc = data.docs[index].data();
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      height: 70,
-                      width: 70,
-                      child: Image.network(doc.imageUrl),
-                    ),
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 5,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("在庫管理アプリ"),
+          backgroundColor: const Color(0xFF222831),
+          bottom: const TabBar(
+            tabs: <Widget>[
+              Tab(text: '出品前'),
+              Tab(text: '出品中'),
+              Tab(text: '発送前'),
+              Tab(text: '発送済'),
+              Tab(text: '取引完了'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: <Widget>[
+            InventoryList(status: InventoryStatus.notListed),
+            InventoryList(status: InventoryStatus.listed),
+            InventoryList(status: InventoryStatus.beforeShipping),
+            InventoryList(status: InventoryStatus.shipped),
+            InventoryList(status: InventoryStatus.transactionComplete),
+            //ref.watch(inventoriesProvider).when(data: (data) {
+            //   return ListView.builder(
+            //     itemCount: data.docs.length,
+            //     itemBuilder: (context, index) {
+            //       final doc = data.docs[index].data();
+            //       return Padding(
+            //         padding: const EdgeInsets.all(8.0),
+            //         child: Row(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             Padding(
+            //               padding: EdgeInsets.all(8.0),
+            //               child: SizedBox(
+            //                 height: 70,
+            //                 width: 70,
+            //                 child: Image.network(doc.imageUrl),
+            //               ),
+            //             ),
+            //             Expanded(
+            //               child: Column(
+            //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                 children: [
+            //                   Row(
+            //                     children: [
+            //                       Text(
+            //                         doc.id,
+            //                         style: const TextStyle(fontSize: 13.0),
+            //                       ),
+            //                       const Padding(
+            //                           padding:
+            //                               EdgeInsets.symmetric(horizontal: 15.0)),
+            //                       Text(
+            //                         doc.brand,
+            //                         style: const TextStyle(fontSize: 13.0),
+            //                       ),
+            //                     ],
+            //                   ),
+            //                   const Padding(
+            //                       padding: EdgeInsets.symmetric(vertical: 4.0)),
+            //                   Text(
+            //                     doc.name,
+            //                     style: const TextStyle(
+            //                       fontWeight: FontWeight.w700,
+            //                       fontSize: 17.0,
+            //                     ),
+            //                   ),
+            //                   const Padding(
+            //                       padding: EdgeInsets.symmetric(vertical: 3.0)),
+            //                   Row(
+            //                     children: [
+            //                       Column(
+            //                         children: [
+            //                           Text(
+            //                             '仕入れ価格',
+            //                             style: const TextStyle(
+            //                               fontWeight: FontWeight.w500,
+            //                               fontSize: 11.0,
+            //                             ),
+            //                           ),
+            //                           Text(
+            //                             '${doc.buyingPrice.toInt()} 円',
+            //                             style: const TextStyle(fontSize: 12.0),
+            //                           ),
+            //                         ],
+            //                       ),
+            //                       // Padding(padding: EdgeInsets.all(8.0)),
+            //                       // Column(
+            //                       //   children: [
+            //                       //     Text(
+            //                       //       '販売価格',
+            //                       //       style: const TextStyle(
+            //                       //         fontWeight: FontWeight.w500,
+            //                       //         fontSize: 11.0,
+            //                       //       ),
+            //                       //     ),
+            //                       //     Text(
+            //                       //       '${doc.buyingPrice.toInt()} 円',
+            //                       //       style: const TextStyle(fontSize: 12.0),
+            //                       //     ),
+            //                       //   ],
+            //                       // ),
+            //                     ],
+            //                   ),
+            //                 ],
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       );
+            //       // return ListTile(
+            //       //   // leading: ,
+            //       //   title: Text(doc.name),
+            //       //   subtitle: Text(doc.id),
+            //       //   // trailing: ,
+            //       // );
+            //     },
+            //   );
+            // }, error: (_, __) {
+            //   return const Center(
+            //     child: Text('エラーが出ました。'),
+            //   );
+            // }, loading: () {
+            //   return const Center(
+            //     child: CircularProgressIndicator(),
+            //   );
+            // }
+            // ),
+          ],
+        ),
+        // StreamBuilder<QuerySnapshot<Inventory>>(
+        //   stream: inventoriesReference.snapshots(),
+        //   builder: (context, snapshot) {
+        //     if (snapshot.hasError) {
+        //       return Text('エラーが発生しました');
+        //     }
+
+        //     if (snapshot.connectionState == ConnectionState.waiting) {
+        //       return CircularProgressIndicator();
+        //     }
+
+        //     final docs = snapshot.data?.docs ?? [];
+        //     return ListView.builder(
+        //       itemCount: docs.length,
+        //       itemBuilder: (content, index) {
+        //         final doc = docs[index].data();
+        //         return Text(doc.name);
+        //       },
+        //     );
+        //   },
+        // ),
+        floatingActionButton: Builder(
+          builder: (context) {
+            return FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddInventory(),
                   ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              doc.id,
-                              style: const TextStyle(fontSize: 13.0),
-                            ),
-                            const Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 15.0)),
-                            Text(
-                              doc.brand,
-                              style: const TextStyle(fontSize: 13.0),
-                            ),
-                          ],
-                        ),
-                        const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4.0)),
-                        Text(
-                          doc.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 17.0,
-                          ),
-                        ),
-                        const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 3.0)),
-                        Row(
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  '仕入れ価格',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 11.0,
-                                  ),
-                                ),
-                                Text(
-                                  '${doc.buyingPrice.toInt()} 円',
-                                  style: const TextStyle(fontSize: 12.0),
-                                ),
-                              ],
-                            ),
-                            // Padding(padding: EdgeInsets.all(8.0)),
-                            // Column(
-                            //   children: [
-                            //     Text(
-                            //       '販売価格',
-                            //       style: const TextStyle(
-                            //         fontWeight: FontWeight.w500,
-                            //         fontSize: 11.0,
-                            //       ),
-                            //     ),
-                            //     Text(
-                            //       '${doc.buyingPrice.toInt()} 円',
-                            //       style: const TextStyle(fontSize: 12.0),
-                            //     ),
-                            //   ],
-                            // ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
+              child: Icon(Icons.add),
+              backgroundColor: Color(0xFF222831),
             );
-            // return ListTile(
-            //   // leading: ,
-            //   title: Text(doc.name),
-            //   subtitle: Text(doc.id),
-            //   // trailing: ,
-            // );
           },
-        );
-      }, error: (_, __) {
-        return const Center(
-          child: Text('エラーが出ました。'),
-        );
-      }, loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }),
-      // StreamBuilder<QuerySnapshot<Inventory>>(
-      //   stream: inventoriesReference.snapshots(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.hasError) {
-      //       return Text('エラーが発生しました');
-      //     }
-
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return CircularProgressIndicator();
-      //     }
-
-      //     final docs = snapshot.data?.docs ?? [];
-      //     return ListView.builder(
-      //       itemCount: docs.length,
-      //       itemBuilder: (content, index) {
-      //         final doc = docs[index].data();
-      //         return Text(doc.name);
-      //       },
-      //     );
-      //   },
-      // ),
-      floatingActionButton: Builder(
-        builder: (context) {
-          return FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddInventory(),
-                ),
-              );
-            },
-            child: Icon(Icons.add),
-            backgroundColor: Color(0xFF222831),
-          );
-        },
+        ),
       ),
     );
   }
