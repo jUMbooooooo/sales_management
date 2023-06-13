@@ -54,9 +54,9 @@ class Inventory {
     final map = snapshot.data()!;
 
     return Inventory(
-      imageUrl: map['imageUrl'],
       date: map['date'],
       id: map['id'],
+      imageUrl: map['imageUrl'],
       brand: map['brand'],
       name: map['name'],
       buyingPrice: map['buyingPrice'],
