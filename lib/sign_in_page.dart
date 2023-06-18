@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'inventory_page.dart';
 
+final currentUser = FirebaseAuth.instance.currentUser!;
+
+final currentUserId = currentUser.uid;
+final currentUserName = currentUser.displayName!;
+
 //SignInPageのクラス(設計図)
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -12,7 +17,20 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  // 既存のログイン情報をクリア
+  Future<void> logout() async {
+    // Googleは別個でログアウトしないと次にログインするときにアカウント選択が表示されない
+    final googleSignIn = GoogleSignIn();
+    if (await googleSignIn.isSignedIn()) {
+      await googleSignIn.signOut();
+    }
+
+    return FirebaseAuth.instance.signOut();
+  }
+
   Future<void> signInWithGoogle() async {
+// 既存のログイン情報をクリア
+
     // GoogleSignIn をして得られた情報を Firebase と関連づけることをやっています。
     final googleUser =
         await GoogleSignIn(scopes: ['profile', 'email']).signIn();
@@ -58,12 +76,15 @@ class _SignInPageState extends State<SignInPage> {
           ),
           child: const Text('Googleサインイン'),
           onPressed: () async {
+            await logout();
             await signInWithGoogle();
             // ログインが成功すると FirebaseAuth.instance.currentUser にログイン中のユーザーの情報が入ります
             // print(FirebaseAuth.instance.currentUser?.displayName);
 
             if (mounted) {
               // ユーザーが正常に認証され、ユーザー情報が得られたページへ遷移
+              print('[$currentUserId],[$currentUserName]');
+
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (cotext) {
                   return const InventoryPage();

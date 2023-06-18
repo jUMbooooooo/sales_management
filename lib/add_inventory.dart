@@ -27,9 +27,15 @@ TextEditingController _buyingPriceController = TextEditingController();
 TextEditingController _otherCostsController = TextEditingController();
 TextEditingController _supplierController = TextEditingController();
 
+TextEditingController _purchasedDatecontroller = TextEditingController();
+TextEditingController _sellingPriceController = TextEditingController();
+TextEditingController _sellLocationController = TextEditingController();
+TextEditingController _shippingCostsController = TextEditingController();
+TextEditingController _salesDatecontroller = TextEditingController();
+
 // 画像選択コードに必要なコントローラーなど
-CollectionReference _reference =
-    FirebaseFirestore.instance.collection('shopping_list');
+// CollectionReference _reference =
+//     FirebaseFirestore.instance.collection('shopping_list');
 
 String imageUrl = '';
 final _statusController = ValueNotifier<InventoryStatus?>(null);
@@ -92,7 +98,15 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                     await referenceImageToUpload.putFile(File(file.path));
 
                     imageUrl = await referenceImageToUpload.getDownloadURL();
-                  } catch (error) {}
+                  } catch (error) {
+                    // エラーログを出力
+                    print('Failed to upload image: $error');
+
+                    // ユーザーへのフィードバック
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('画像のアップロードに失敗しました。')),
+                    );
+                  }
                 },
                 icon: Icon(Icons.camera_alt),
               ),
@@ -423,7 +437,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         fontSize: 15,
                         color: Colors.grey,
                       ),
-                      labelText: '状態',
+                      labelText: '状況',
                       floatingLabelStyle: const TextStyle(fontSize: 12),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -435,7 +449,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                     ),
                     validator: (value) {
                       if (value == null) {
-                        return '商品の状態を入力してください';
+                        return '商品の状況を入力してください';
                       }
                       return null;
                     },
@@ -450,6 +464,207 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                       );
                     }).toList(),
                   )),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                    labelStyle: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                    labelText: '販売日付',
+                    floatingLabelStyle: const TextStyle(fontSize: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  onTap: () async {
+                    // 日付選択ダイアログを表示
+                    var date = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime(2100),
+                    );
+
+                    // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
+                    if (date != null) {
+                      String formattedDate = DateFormat('yyyy-MM-dd')
+                          .format(date); // 日付を適切な形式にフォーマット
+                      _purchasedDatecontroller.text =
+                          formattedDate; // テキストフィールドに日付を設定
+                    }
+                  },
+                  controller: _purchasedDatecontroller,
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    suffixText: '円',
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                    labelStyle: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                    labelText: '販売価格',
+                    floatingLabelStyle: const TextStyle(fontSize: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    return null;
+                  },
+                  controller: _sellingPriceController,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                    labelStyle: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                    labelText: '販売場所',
+                    floatingLabelStyle: const TextStyle(fontSize: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                  controller: _sellLocationController,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    suffixText: '円',
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                    labelStyle: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                    labelText: '送料',
+                    floatingLabelStyle: const TextStyle(fontSize: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    return null;
+                  },
+                  controller: _shippingCostsController,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                    labelStyle: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                    labelText: '売上日付',
+                    floatingLabelStyle: const TextStyle(fontSize: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  onTap: () async {
+                    // 日付選択ダイアログを表示
+                    var date = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime(2100),
+                    );
+
+                    // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
+                    if (date != null) {
+                      String formattedDate = DateFormat('yyyy-MM-dd')
+                          .format(date); // 日付を適切な形式にフォーマット
+                      _salesDatecontroller.text =
+                          formattedDate; // テキストフィールドに日付を設定
+                    }
+                  },
+                  controller: _salesDatecontroller,
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+              ),
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
@@ -457,31 +672,66 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                 ),
                 onPressed: () async {
                   try {
+                    // double.parse()を安全にするためのnullチェック
+
+                    double? sellingPrice =
+                        _sellingPriceController.text.isNotEmpty
+                            ? double.parse(_sellingPriceController.text)
+                            : null;
+
+                    double? shippingCost =
+                        _shippingCostsController.text.isNotEmpty
+                            ? double.parse(_shippingCostsController.text)
+                            : null;
                     if (_formKey.currentState!.validate()) {
                       // フォームが有効ならば何かを行う
                       // 例えば、データをサーバに送信するなど
-                      // final user = FirebaseAuth.instance.currentUser!;
-
-                      // final posterId = user.uid;
-                      // final posterName = user.displayName!;
-                      // final posterImageUrl = user.photoURL!;
 
                       ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text('在庫を追加しました')));
+                          .showSnackBar(SnackBar(content: Text('在庫を追加中です')));
 
                       // String image = await uploadImage();
 
                       DateTime dateTime =
                           DateFormat('yyyy-MM-dd').parse(_datecontroller.text);
+                      // DateTime purchasedDateTime = DateFormat('yyyy-MM-dd')
+                      //     .parse(_purchasedDatecontroller.text);
+                      // DateTime salesDateTime = DateFormat('yyyy-MM-dd')
+                      //     .parse(_salesDatecontroller.text);
 
-                      Timestamp timestamp = Timestamp.fromDate(dateTime);
+                      DateTime? purchasedDateTime =
+                          _purchasedDatecontroller.text.isNotEmpty
+                              ? DateFormat('yyyy-MM-dd')
+                                  .parse(_purchasedDatecontroller.text)
+                              : null;
+
+                      DateTime? salesDateTime =
+                          _salesDatecontroller.text.isNotEmpty
+                              ? DateFormat('yyyy-MM-dd')
+                                  .parse(_salesDatecontroller.text)
+                              : null;
+
+                      Timestamp dateTimestamp = Timestamp.fromDate(dateTime);
+                      // Timestamp purchasedDateTimestamp =
+                      //     Timestamp.fromDate(purchasedDateTime);
+                      // Timestamp salesDateTimestamp =
+                      //     Timestamp.fromDate(salesDateTime);
+
+                      Timestamp? purchasedDateTimestamp =
+                          purchasedDateTime != null
+                              ? Timestamp.fromDate(purchasedDateTime)
+                              : null;
+
+                      Timestamp? salesDateTimestamp = salesDateTime != null
+                          ? Timestamp.fromDate(salesDateTime)
+                          : null;
 
                       final newDocumentReference = inventoriesReference.doc();
 
                       // FIrestoreに追加するデータ
                       Inventory newInventory = Inventory(
                         imageUrl: imageUrl,
-                        date: timestamp,
+                        date: dateTimestamp,
                         id: _idController.text,
                         brand: _selectedBrand.value!,
                         name: _nameController.text,
@@ -490,12 +740,37 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         supplier: _supplierController.text,
                         reference: newDocumentReference,
                         status: _statusController.value!,
+                        inspection: false,
+                        purchased: false,
+                        purchasedDate: purchasedDateTimestamp,
+                        selligPrice: sellingPrice,
+                        // selligPrice: double.parse(_sellingPriceController.text),
+                        sellLocation: _sellLocationController.text,
+                        shippingCost: shippingCost,
+                        // shippingCost:
+                        //     double.parse(_shippingCostsController.text),
+                        salesDate: salesDateTimestamp,
+                        revenue: false,
                       );
 
                       // Firestoreにデータを追加
                       await inventoriesReference.add(newInventory).then((_) {
                         // データの追加が成功したら前の画面に戻る
                         Navigator.pop(context);
+                        // TextFormFieldの値をリセットする
+                        _datecontroller.clear();
+                        _idController.clear();
+                        _selectedBrand.value = null;
+                        _nameController.clear();
+                        _buyingPriceController.clear();
+                        _otherCostsController.clear();
+                        _supplierController.clear();
+                        _purchasedDatecontroller.clear();
+                        _sellingPriceController.clear();
+                        _sellLocationController.clear();
+                        _shippingCostsController.clear();
+                        _salesDatecontroller.clear();
+                        _statusController.value = InventoryStatus.notListed;
                       });
                     } else {
                       throw Exception('フォーム入力をしてください。');
@@ -503,15 +778,6 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                   } catch (e) {
                     ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(content: Text('エラーが起きました: $e')));
-                    // TextFormFieldの値をリセットする
-                    _datecontroller.clear();
-                    _idController.clear();
-                    _selectedBrand.value = null;
-                    _nameController.clear();
-                    _buyingPriceController.clear();
-                    _otherCostsController.clear();
-                    _supplierController.clear();
-                    _statusController.value = InventoryStatus.notListed;
                   }
                 },
                 child: Text('追加する'),

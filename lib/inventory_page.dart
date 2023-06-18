@@ -4,6 +4,7 @@ import 'package:sales_management_app/inventory_class.dart';
 // import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'add_inventory.dart';
 import 'inventory_listview.dart';
+import 'sign_in_page.dart';
 
 // 在庫情報を表示するページ
 // 常に在庫は入れ替わるので、StatefulWidget
@@ -173,10 +174,12 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         //     );
         //   },
         // ),
+
         floatingActionButton: Builder(
           builder: (context) {
             return FloatingActionButton(
               onPressed: () {
+                print('[$currentUserId],[$currentUserName]');
                 Navigator.push(
                   context,
                   MaterialPageRoute(

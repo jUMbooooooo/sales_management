@@ -36,14 +36,14 @@ class Inventory {
     required this.otherCosts,
     required this.supplier,
     required this.status,
-    // required this.inspection,
-    // required this.purchased,
-    // required this.purchasedDate,
-    // required this.sellgPrice,
-    // required this.sellLocation,
-    // required this.shippingCost,
-    // required this.salesDate,
-    // required this.revenue,
+    required this.inspection,
+    required this.purchased,
+    this.purchasedDate,
+    this.selligPrice,
+    this.sellLocation,
+    this.shippingCost,
+    this.salesDate,
+    required this.revenue,
     required this.reference,
   });
 
@@ -62,14 +62,14 @@ class Inventory {
       buyingPrice: map['buyingPrice'],
       otherCosts: map['otherCosts'],
       supplier: map['supplier'],
-      // inspection: map['inspection'],
-      // purchased: map['purchased'],
-      // purchasedDate: map['purchasedDate'],
-      // sellgPrice: map['sellgPrice'],
-      // sellLocation: map['sellLocation'],
-      // shippingCost: map['shippingCost'],
-      // salesDate: map['salesDate'],
-      // revenue: map['revenue'],
+      inspection: map['inspection'],
+      purchased: map['purchased'],
+      purchasedDate: map['purchasedDate'],
+      selligPrice: map['selligPrice'],
+      sellLocation: map['sellLocation'],
+      shippingCost: map['shippingCost'],
+      salesDate: map['salesDate'],
+      revenue: map['revenue'],
       status: InventoryStatus.values.firstWhere(
           (e) => e.toString() == 'InventoryStatus.${map['status']}'),
       reference: snapshot.reference,
@@ -86,14 +86,14 @@ class Inventory {
       'buyingPrice': buyingPrice,
       'otherCosts': otherCosts,
       'supplier': supplier,
-      // 'inspection': inspection,
-      // 'purchased': purchased,
-      // 'purchasedDate': purchasedDate,
-      // 'sellgPrice': sellgPrice,
-      // 'sellLocation': sellLocation,
-      // 'shippingCost': shippingCost,
-      // 'salesDate': salesDate,
-      // 'revenue': revenue,
+      'inspection': inspection,
+      'purchased': purchased,
+      'purchasedDate': purchasedDate,
+      'selligPrice': selligPrice,
+      'sellLocation': sellLocation,
+      'shippingCost': shippingCost,
+      'salesDate': salesDate,
+      'revenue': revenue,
       'status': status.toString().split('.').last,
     };
   }
@@ -106,13 +106,13 @@ class Inventory {
   late double buyingPrice; //仕入れ価格
   late double otherCosts; //仕入れ送料+その他コスト
   late String supplier; //仕入れ先
-  // late bool inspection; //検品チェック(状態として)
-  // late bool purchased; //購入チェック(状態として)
-  // late Timestamp purchasedDate; //購入日時
-  // late double sellgPrice; //販売価格
-  // late String sellLocation; //販売先
-  // late double shippingCost; //販売時送料
-  // late Timestamp salesDate; //売上日時
-  // late bool revenue; //売上
-  final DocumentReference reference;
+  late bool inspection; //検品チェック(状態として)
+  late bool purchased; //購入チェック(状態として)
+  late Timestamp? purchasedDate; //購入日時
+  late double? selligPrice; //販売価格
+  late String? sellLocation; //販売先
+  late double? shippingCost; //販売時送料
+  late Timestamp? salesDate; //売上日時
+  late bool revenue; //売上
+  final DocumentReference reference; //リファレンス
 }
