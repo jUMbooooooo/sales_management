@@ -10,35 +10,38 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'inventory_class.dart';
+import 'custom_widget/add_inventory_field.dart';
 
 // フォームの状態を管理するためのキー
 final _formKey = GlobalKey<FormState>();
 
 // ブランド名のプルダウンリストの中身
-List<String> brands = ['LOUIS VUITTON', 'CHANEL', 'GUCCI', 'PRADA', 'HERMES'];
-final _selectedBrand = ValueNotifier<String?>(null);
+// List<String> brands = ['LOUIS VUITTON', 'CHANEL', 'GUCCI', 'PRADA', 'HERMES'];
+// final _selectedBrand = ValueNotifier<String?>(null);
 // final _imageController = ValueNotifier<String?>(null);
 // TextFormFieldに入力されるテキストを操作するためのWidget
 // for getting the corrent text, updating the text, listening for change
-TextEditingController _datecontroller = TextEditingController();
+TextEditingController _dateController = TextEditingController();
 TextEditingController _idController = TextEditingController();
 TextEditingController _nameController = TextEditingController();
+TextEditingController _brandController = TextEditingController();
 TextEditingController _buyingPriceController = TextEditingController();
 TextEditingController _otherCostsController = TextEditingController();
 TextEditingController _supplierController = TextEditingController();
 
-TextEditingController _purchasedDatecontroller = TextEditingController();
+TextEditingController _purchasedDateontroller = TextEditingController();
 TextEditingController _sellingPriceController = TextEditingController();
 TextEditingController _sellLocationController = TextEditingController();
 TextEditingController _shippingCostsController = TextEditingController();
-TextEditingController _salesDatecontroller = TextEditingController();
+TextEditingController _salesDateController = TextEditingController();
 
 // 画像選択コードに必要なコントローラーなど
 // CollectionReference _reference =
 //     FirebaseFirestore.instance.collection('shopping_list');
 
 String imageUrl = '';
-final _statusController = ValueNotifier<InventoryStatus?>(null);
+final _statusController =
+    ValueNotifier<InventoryStatus?>(InventoryStatus.notListed);
 
 // 在庫追加のためのクラス(設計図)の作成
 // なぜStatefulWidgetがいいのかわかっていない(未解決)
@@ -110,561 +113,632 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                 },
                 icon: Icon(Icons.camera_alt),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '日付',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  onTap: () async {
-                    // 日付選択ダイアログを表示
-                    var date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime(2100),
-                    );
+              CustomTextFormField(
+                labelText: '日付',
+                readOnly: true,
+                onTap: () async {
+                  // 日付選択ダイアログを表示
+                  var date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+                  // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
+                  if (date != null) {
+                    String formattedDate = DateFormat('yyyy-MM-dd')
+                        .format(date); // 日付を適切な形式にフォーマット
+                    _dateController.text = formattedDate; // テキストフィールドに日付を設定
+                  }
+                },
+                controller: _dateController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '日付を入力してください';
+                  }
+                  return null;
+                },
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextFormField(
+              //     decoration: InputDecoration(
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: '管理番号',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
 
-                    // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
-                    if (date != null) {
-                      String formattedDate = DateFormat('yyyy-MM-dd')
-                          .format(date); // 日付を適切な形式にフォーマット
-                      _datecontroller.text = formattedDate; // テキストフィールドに日付を設定
-                    }
-                  },
-                  controller: _datecontroller,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '日付を入力してください';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '管理番号',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
+              //     keyboardType: TextInputType.emailAddress,
 
-                  keyboardType: TextInputType.emailAddress,
+              //     // 半角英数字のみに制限
+              //     inputFormatters: [
+              //       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+              //     ],
+              //     validator: (value) {
+              //       if (value == null || value.isEmpty) {
+              //         return '管理番号を入力してください';
+              //       }
+              //       return null;
+              //     },
+              //     controller: _idController,
+              //   ),
+              // ),
+              CustomTextFormField(
+                labelText: '管理番号',
+                onTap: () {},
+                controller: _idController,
+                keyboardType: TextInputType.emailAddress,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]'))
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '管理番号を入力してください';
+                  }
+                  return null;
+                },
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextFormField(
+              //     decoration: InputDecoration(
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: '管理番号',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
 
-                  // 半角英数字のみに制限
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
-                  ],
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '管理番号を入力してください';
-                    }
-                    return null;
-                  },
-                  controller: _idController,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: 'ブランド',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  value: _selectedBrand.value,
-                  items: brands.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    _selectedBrand.value = newValue;
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'ブランドを選択してください';
-                    }
-                    return null;
-                  },
-                ),
-                // child: TextFormField(
-                //   decoration: InputDecoration(
-                //     focusedBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(16),
-                //       borderSide: const BorderSide(
-                //         color: Colors.black,
-                //         width: 2.0,
-                //       ),
-                //     ),
-                //     labelStyle: TextStyle(
-                //       fontSize: 15,
-                //       color: Colors.grey,
-                //     ),
-                //     labelText: 'ブランド名',
-                //     floatingLabelStyle: const TextStyle(fontSize: 12),
-                //     enabledBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(16),
-                //       borderSide: BorderSide(
-                //         color: Colors.black,
-                //         width: 1.0,
-                //       ),
-                //     ),
-                //   ),
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'ブランド名を入力してください';
-                //     }
-                //     return null;
-                //   },
-                // ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '商品名',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '商品名を入力してください';
-                    }
-                    return null;
-                  },
-                  controller: _nameController,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    suffixText: '円',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '仕入れ価格',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '仕入れ価格を入力してください';
-                    }
-                    return null;
-                  },
-                  controller: _buyingPriceController,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    suffixText: '円',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '仕入れ時送料',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '仕入れ時の送料を入力してください';
-                    }
-                    return null;
-                  },
-                  controller: _otherCostsController,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '仕入れ先',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '仕入れ先を入力してください';
-                    }
-                    return null;
-                  },
-                  controller: _supplierController,
-                ),
-              ),
-              Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButtonFormField<InventoryStatus>(
-                    value: InventoryStatus.notListed,
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(
-                          color: Colors.black,
-                          width: 2.0,
-                        ),
-                      ),
-                      labelStyle: TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey,
-                      ),
-                      labelText: '状況',
-                      floatingLabelStyle: const TextStyle(fontSize: 12),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(
-                          color: Colors.black,
-                          width: 1.0,
-                        ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null) {
-                        return '商品の状況を入力してください';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      _statusController.value = value;
-                    },
-                    items: InventoryStatus.values.map((InventoryStatus status) {
-                      return DropdownMenuItem<InventoryStatus>(
-                        value: status,
-                        child: Text(inventoryStatusToJapanese(status)),
-                        // child: Text(status.toString().split('.').last),
-                      );
-                    }).toList(),
-                  )),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '販売日付',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  onTap: () async {
-                    // 日付選択ダイアログを表示
-                    var date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime(2100),
-                    );
+              //     keyboardType: TextInputType.emailAddress,
 
-                    // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
-                    if (date != null) {
-                      String formattedDate = DateFormat('yyyy-MM-dd')
-                          .format(date); // 日付を適切な形式にフォーマット
-                      _purchasedDatecontroller.text =
-                          formattedDate; // テキストフィールドに日付を設定
-                    }
-                  },
-                  controller: _purchasedDatecontroller,
-                  validator: (value) {
-                    return null;
-                  },
-                ),
+              //     // 半角英数字のみに制限
+              //     inputFormatters: [
+              //       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+              //     ],
+              //     validator: (value) {
+              //       if (value == null || value.isEmpty) {
+              //         return '管理番号を入力してください';
+              //       }
+              //       return null;
+              //     },
+              //     controller: _idController,
+              //   ),
+              // ),
+              CustomTextFormField(
+                labelText: 'ブランド名',
+                onTap: () {},
+                controller: _brandController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'ブランド名を入力してください';
+                  }
+                  return null;
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    suffixText: '円',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '販売価格',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    return null;
-                  },
-                  controller: _sellingPriceController,
-                ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: DropdownButtonFormField<String>(
+              //     decoration: InputDecoration(
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: 'ブランド',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
+              //     value: _selectedBrand.value,
+              //     items: brands.map<DropdownMenuItem<String>>((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(value),
+              //       );
+              //   }).toList(),
+              //   onChanged: (String? newValue) {
+              //     _selectedBrand.value = newValue;
+              //   },
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'ブランドを選択してください';
+              //     }
+              //     return null;
+              //   },
+              // ),
+              CustomTextFormField(
+                labelText: '商品名',
+                onTap: () {},
+                controller: _nameController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '商品名を入力してください';
+                  }
+                  return null;
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '販売場所',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    return null;
-                  },
-                  controller: _sellLocationController,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    suffixText: '円',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '送料',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    return null;
-                  },
-                  controller: _shippingCostsController,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    labelText: '売上日付',
-                    floatingLabelStyle: const TextStyle(fontSize: 12),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  onTap: () async {
-                    // 日付選択ダイアログを表示
-                    var date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime(2100),
-                    );
 
-                    // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
-                    if (date != null) {
-                      String formattedDate = DateFormat('yyyy-MM-dd')
-                          .format(date); // 日付を適切な形式にフォーマット
-                      _salesDatecontroller.text =
-                          formattedDate; // テキストフィールドに日付を設定
-                    }
-                  },
-                  controller: _salesDatecontroller,
-                  validator: (value) {
-                    return null;
-                  },
-                ),
+              CustomTextFormField(
+                labelText: '仕入れ価格',
+                suffixText: '円',
+                onTap: () {},
+                controller: _buyingPriceController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '仕入れ価格を入力してください';
+                  }
+                  return null;
+                },
               ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextFormField(
+              //     decoration: InputDecoration(
+              //       suffixText: '円',
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: '仕入れ価格',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
+              //     inputFormatters: [
+              //       FilteringTextInputFormatter.digitsOnly,
+              //     ],
+              //     keyboardType: TextInputType.number,
+              //     validator: (value) {
+              //       if (value == null || value.isEmpty) {
+              //         return '仕入れ価格を入力してください';
+              //       }
+              //       return null;
+              //     },
+              //     controller: _buyingPriceController,
+              //   ),
+              // ),
+              CustomTextFormField(
+                labelText: '仕入れ時送料',
+                suffixText: '円',
+                onTap: () {},
+                controller: _otherCostsController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '仕入れ時送料を入力してください';
+                  }
+                  return null;
+                },
+              ),
+              CustomTextFormField(
+                labelText: '仕入先',
+                onTap: () {},
+                controller: _supplierController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '仕入先を入力してください';
+                  }
+                  return null;
+                },
+              ),
+              CustomDropdownButtonFormField<InventoryStatus>(
+                labelText: '状況',
+                value: _statusController.value ?? InventoryStatus.notListed,
+                items: InventoryStatus.values,
+                onChanged: (InventoryStatus? newValue) {
+                  if (newValue != null) {
+                    _statusController.value = newValue;
+                  }
+                },
+                validator: (InventoryStatus? value) {
+                  if (value == null) {
+                    return '商品の状況を入力してください';
+                  }
+                  return null;
+                },
+                displayText: inventoryStatusToJapanese,
+              ),
+
+              // CustomDropdownButtonFormField<InventoryStatus>(
+              //   labelText: '状況',
+              //   value: InventoryStatus.notListed,
+              //   items: InventoryStatus.values,
+              //   onChanged: (InventoryStatus? newValue) {
+              //     if (newValue != null) {
+              //       _statusController.value = newValue;
+              //     }
+              //   },
+              //   validator: (InventoryStatus? value) {
+              //     if (value == null) {
+              //       return '商品の状況を入力してください';
+              //     }
+              //     return null;
+              //   },
+              //   displayText: inventoryStatusToJapanese,
+              // ),
+
+              // Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: DropdownButtonFormField<InventoryStatus>(
+              //       value: InventoryStatus.notListed,
+              //       decoration: InputDecoration(
+              //         focusedBorder: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(16),
+              //           borderSide: const BorderSide(
+              //             color: Colors.black,
+              //             width: 2.0,
+              //           ),
+              //         ),
+              //         labelStyle: TextStyle(
+              //           fontSize: 15,
+              //           color: Colors.grey,
+              //         ),
+              //         labelText: '状況',
+              //         floatingLabelStyle: const TextStyle(fontSize: 12),
+              //         enabledBorder: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(16),
+              //           borderSide: BorderSide(
+              //             color: Colors.black,
+              //             width: 1.0,
+              //           ),
+              //         ),
+              //       ),
+              //       validator: (value) {
+              //         if (value == null) {
+              //           return '商品の状況を入力してください';
+              //         }
+              //         return null;
+              //       },
+              //       onChanged: (value) {
+              //         _statusController.value = value;
+              //       },
+              //       items: InventoryStatus.values.map((InventoryStatus status) {
+              //         return DropdownMenuItem<InventoryStatus>(
+              //           value: status,
+              //           child: Text(inventoryStatusToJapanese(status)),
+              //           // child: Text(status.toString().split('.').last),
+              //         );
+              //       }).toList(),
+              //     )),
+              CustomTextFormField(
+                labelText: '販売日時',
+                readOnly: true,
+                onTap: () async {
+                  // 日付選択ダイアログを表示
+                  var date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+
+                  // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
+                  if (date != null) {
+                    String formattedDate = DateFormat('yyyy-MM-dd')
+                        .format(date); // 日付を適切な形式にフォーマット
+                    _purchasedDateontroller.text =
+                        formattedDate; // テキストフィールドに日付を設定
+                  }
+                },
+                controller: _purchasedDateontroller,
+                validator: (value) {
+                  return null;
+                },
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextFormField(
+              //     readOnly: true,
+              //     decoration: InputDecoration(
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: '販売日付',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
+              //     onTap: () async {
+              //       // 日付選択ダイアログを表示
+              //       var date = await showDatePicker(
+              //         context: context,
+              //         initialDate: DateTime.now(),
+              //         firstDate: DateTime(1900),
+              //         lastDate: DateTime(2100),
+              //       );
+
+              // // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
+              // if (date != null) {
+              //   String formattedDate = DateFormat('yyyy-MM-dd')
+              //       .format(date); // 日付を適切な形式にフォーマット
+              //   _purchasedDateontroller.text =
+              //       formattedDate; // テキストフィールドに日付を設定
+              // }
+              //     },
+              //     controller: _purchasedDateontroller,
+              //     validator: (value) {
+              //       return null;
+              //     },
+              //   ),
+              // ),
+              CustomTextFormField(
+                labelText: '販売価格',
+                suffixText: '円',
+                onTap: () {},
+                controller: _sellingPriceController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (value) {
+                  return null;
+                },
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextFormField(
+              //     decoration: InputDecoration(
+              //       suffixText: '円',
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: '販売価格',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
+              //     inputFormatters: [
+              //       FilteringTextInputFormatter.digitsOnly,
+              //     ],
+              //     keyboardType: TextInputType.number,
+              //     validator: (value) {
+              //       return null;
+              //     },
+              //     controller: _sellingPriceController,
+              //   ),
+              // ),
+              CustomTextFormField(
+                labelText: '販売場所',
+                onTap: () {},
+                controller: _sellLocationController,
+                validator: (value) {
+                  return null;
+                },
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextFormField(
+              //     decoration: InputDecoration(
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: '販売場所',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
+              //     validator: (value) {
+              //       return null;
+              //     },
+              //     controller: _sellLocationController,
+              //   ),
+              // ),
+              CustomTextFormField(
+                labelText: '送料',
+                suffixText: '円',
+                onTap: () {},
+                controller: _shippingCostsController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (value) {
+                  return null;
+                },
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextFormField(
+              //     decoration: InputDecoration(
+              //       suffixText: '円',
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: '送料',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
+              //     inputFormatters: [
+              //       FilteringTextInputFormatter.digitsOnly,
+              //     ],
+              //     keyboardType: TextInputType.number,
+              //     validator: (value) {
+              //       return null;
+              //     },
+              //     controller: _shippingCostsController,
+              //   ),
+              // ),
+              CustomTextFormField(
+                labelText: '売上日時',
+                readOnly: true,
+                onTap: () async {
+                  // 日付選択ダイアログを表示
+                  var date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+
+                  // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
+                  if (date != null) {
+                    String formattedDate = DateFormat('yyyy-MM-dd')
+                        .format(date); // 日付を適切な形式にフォーマット
+                    _purchasedDateontroller.text =
+                        formattedDate; // テキストフィールドに日付を設定
+                  }
+                },
+                controller: _salesDateController,
+                validator: (value) {
+                  return null;
+                },
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextFormField(
+              //     readOnly: true,
+              //     decoration: InputDecoration(
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: const BorderSide(
+              //           color: Colors.black,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       labelStyle: TextStyle(
+              //         fontSize: 15,
+              //         color: Colors.grey,
+              //       ),
+              //       labelText: '売上日付',
+              //       floatingLabelStyle: const TextStyle(fontSize: 12),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(16),
+              //         borderSide: BorderSide(
+              //           color: Colors.black,
+              //           width: 1.0,
+              //         ),
+              //       ),
+              //     ),
+              //     onTap: () async {
+              //       // 日付選択ダイアログを表示
+              //       var date = await showDatePicker(
+              //         context: context,
+              //         initialDate: DateTime.now(),
+              //         firstDate: DateTime(1900),
+              //         lastDate: DateTime(2100),
+              //       );
+
+              //       // 日付が選択された場合(nullじゃない場合)、その日付をテキストフィールドに設定
+              //       if (date != null) {
+              //         String formattedDate = DateFormat('yyyy-MM-dd')
+              //             .format(date); // 日付を適切な形式にフォーマット
+              //         _salesDateController.text =
+              //             formattedDate; // テキストフィールドに日付を設定
+              //       }
+              //     },
+              //     controller: _salesDateController,
+              //     validator: (value) {
+              //       return null;
+              //     },
+              //   ),
+              // ),
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
@@ -693,22 +767,22 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                       // String image = await uploadImage();
 
                       DateTime dateTime =
-                          DateFormat('yyyy-MM-dd').parse(_datecontroller.text);
+                          DateFormat('yyyy-MM-dd').parse(_dateController.text);
                       // DateTime purchasedDateTime = DateFormat('yyyy-MM-dd')
-                      //     .parse(_purchasedDatecontroller.text);
+                      //     .parse(_purchasedDateontroller.text);
                       // DateTime salesDateTime = DateFormat('yyyy-MM-dd')
-                      //     .parse(_salesDatecontroller.text);
+                      //     .parse(_salesDateController.text);
 
                       DateTime? purchasedDateTime =
-                          _purchasedDatecontroller.text.isNotEmpty
+                          _purchasedDateontroller.text.isNotEmpty
                               ? DateFormat('yyyy-MM-dd')
-                                  .parse(_purchasedDatecontroller.text)
+                                  .parse(_purchasedDateontroller.text)
                               : null;
 
                       DateTime? salesDateTime =
-                          _salesDatecontroller.text.isNotEmpty
+                          _salesDateController.text.isNotEmpty
                               ? DateFormat('yyyy-MM-dd')
-                                  .parse(_salesDatecontroller.text)
+                                  .parse(_salesDateController.text)
                               : null;
 
                       Timestamp dateTimestamp = Timestamp.fromDate(dateTime);
@@ -733,7 +807,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         imageUrl: imageUrl,
                         date: dateTimestamp,
                         id: _idController.text,
-                        brand: _selectedBrand.value!,
+                        brand: _brandController.text,
                         name: _nameController.text,
                         buyingPrice: double.parse(_buyingPriceController.text),
                         otherCosts: double.parse(_otherCostsController.text),
@@ -758,18 +832,19 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         // データの追加が成功したら前の画面に戻る
                         Navigator.pop(context);
                         // TextFormFieldの値をリセットする
-                        _datecontroller.clear();
+                        _dateController.clear();
                         _idController.clear();
-                        _selectedBrand.value = null;
+                        // _selectedBrand.value = null;
+                        _brandController.clear();
                         _nameController.clear();
                         _buyingPriceController.clear();
                         _otherCostsController.clear();
                         _supplierController.clear();
-                        _purchasedDatecontroller.clear();
+                        _purchasedDateontroller.clear();
                         _sellingPriceController.clear();
                         _sellLocationController.clear();
                         _shippingCostsController.clear();
-                        _salesDatecontroller.clear();
+                        _salesDateController.clear();
                         _statusController.value = InventoryStatus.notListed;
                       });
                     } else {

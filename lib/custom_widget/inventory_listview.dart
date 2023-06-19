@@ -14,9 +14,14 @@ class InventoryList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(inventoriesProvider).when(
-      data: (data) {
-        var filteredDocs =
-            data.docs.where((doc) => doc.data().status == status).toList();
+      data: (List<Inventory> inventories) {
+        var filteredDocs = inventories
+            .where((inventory) => inventory.status == status)
+            .toList();
+        // ref.watch(inventoriesProvider).when(
+        //   data: (data) {
+        //     var filteredDocs =
+        //         data.docs.where((doc) => doc.data().status == status).toList();
 
         print(filteredDocs);
 
@@ -27,7 +32,7 @@ class InventoryList extends ConsumerWidget {
         return ListView.builder(
           itemCount: filteredDocs.length,
           itemBuilder: (context, index) {
-            final doc = filteredDocs[index].data();
+            final doc = filteredDocs[index];
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

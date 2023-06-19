@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales_management_app/inventory_class.dart';
 // import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'add_inventory.dart';
-import 'inventory_listview.dart';
+import 'custom_widget/inventory_listview.dart';
 import 'sign_in_page.dart';
 
 // 在庫情報を表示するページ

@@ -47,21 +47,20 @@ final userReference =
 
 // なぜユーザーのサブコレクションがうまくいったのか。
 
-final inventoriesReference = FirebaseFirestore.instance
-    .collection('inventories')
-    .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
-  return Inventory.fromFirestore(snapshot);
-}), toFirestore: ((value, _) {
-  return value.toMap();
-}));
-
-
-// サブコレクション実装のコード
-
-// final inventoriesReference = userReference
+// final inventoriesReference = FirebaseFirestore.instance
 //     .collection('inventories')
 //     .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
 //   return Inventory.fromFirestore(snapshot);
 // }), toFirestore: ((value, _) {
 //   return value.toMap();
 // }));
+
+// サブコレクション実装のコード
+
+final inventoriesReference = userReference
+    .collection('inventories')
+    .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
+  return Inventory.fromFirestore(snapshot);
+}), toFirestore: ((value, _) {
+  return value.toMap();
+}));
