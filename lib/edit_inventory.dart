@@ -1,68 +1,107 @@
+// 編集したい在庫のドキュメントIDを持つ新しいStatefulWidgetを作成
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sales_management_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 
-import 'inventory_class.dart';
 import 'custom_widget/add_inventory_field.dart';
+import 'inventory_class.dart';
+import 'add_inventory.dart';
 
 // フォームの状態を管理するためのキー
-final _addFormKey = GlobalKey<FormState>();
+final _editFormKey = GlobalKey<FormState>();
 
-// ブランド名のプルダウンリストの中身
-// List<String> brands = ['LOUIS VUITTON', 'CHANEL', 'GUCCI', 'PRADA', 'HERMES'];
-// final _selectedBrand = ValueNotifier<String?>(null);
-// final _imageController = ValueNotifier<String?>(null);
-// TextFormFieldに入力されるテキストを操作するためのWidget
-// for getting the corrent text, updating the text, listening for change
-String imageUrl = '';
-TextEditingController _dateController = TextEditingController();
-TextEditingController _idController = TextEditingController();
-TextEditingController _nameController = TextEditingController();
-TextEditingController _brandController = TextEditingController();
-TextEditingController _buyingPriceController = TextEditingController();
-TextEditingController _otherCostsController = TextEditingController();
-TextEditingController _supplierController = TextEditingController();
+class EditInventory extends ConsumerStatefulWidget {
+  final String inventoryId; // 編集する在庫のドキュメントID
 
-final _statusController =
-    ValueNotifier<InventoryStatus?>(InventoryStatus.notListed);
-
-TextEditingController _purchasedDateontroller = TextEditingController();
-TextEditingController _sellingPriceController = TextEditingController();
-TextEditingController _sellLocationController = TextEditingController();
-TextEditingController _shippingCostsController = TextEditingController();
-TextEditingController _salesDateController = TextEditingController();
-
-// 在庫追加のためのクラス(設計図)の作成
-// なぜStatefulWidgetがいいのかわかっていない(未解決)
-class AddInventory extends ConsumerStatefulWidget {
-  const AddInventory({super.key});
+  EditInventory({required this.inventoryId, super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _AddInventoryState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _EditInventoryState();
 }
 
-class _AddInventoryState extends ConsumerState<AddInventory> {
+class _EditInventoryState extends ConsumerState<EditInventory> {
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _brandController = TextEditingController();
+  final TextEditingController _buyingPriceController = TextEditingController();
+  final TextEditingController _otherCostsController = TextEditingController();
+  final TextEditingController _supplierController = TextEditingController();
+
+  final _statusController =
+      ValueNotifier<InventoryStatus?>(InventoryStatus.notListed);
+
+  final TextEditingController _purchasedDateontroller = TextEditingController();
+  final TextEditingController _sellingPriceController = TextEditingController();
+  final TextEditingController _sellLocationController = TextEditingController();
+  final TextEditingController _shippingCostsController =
+      TextEditingController();
+  final TextEditingController _salesDateController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAndSetData(); // データを取得してTextEditingControllerにセットする
+  }
+
+  Future<void> fetchAndSetData() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> doc =
+          await FirebaseFirestore.instance
+              .collection('users') // usersコレクション
+              .doc(currentUserId) // 特定のユーザーのドキュメントID
+              .collection('inventories') // 特定のユーザーの在庫サブコレクション
+              .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
+        return Inventory.fromFirestore(snapshot);
+      }), toFirestore: ((value, _) {
+        return value.toMap();
+      })).get() as DocumentSnapshot<Map<String, dynamic>>;
+
+      // データが存在しない場合はエラー
+      if (!doc.exists) {
+        throw Exception('データが見つかりません');
+      }
+
+      Inventory inventory = Inventory.fromFirestore(doc);
+
+      // 日付形式を用いて Timestamp を String に変換します
+      String purchasedDateStr =
+          inventory.purchasedDate?.toDate().toString() ?? 'No date';
+      _dateController.text =
+          DateFormat('yyyy-MM-dd').format(inventory.date.toDate());
+      _idController.text = inventory.id;
+      _brandController.text = inventory.brand;
+      _nameController.text = inventory.name;
+      _buyingPriceController.text = inventory.buyingPrice.toString();
+      _otherCostsController.text = inventory.otherCosts.toString();
+      _supplierController.text = inventory.supplier;
+      _statusController.value = inventory.status;
+
+      _purchasedDateontroller.text = purchasedDateStr;
+      _sellingPriceController.text = inventory.selligPrice?.toString() ?? '';
+    } catch (e) {
+      print('Failed to fetch inventory: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // return MaterialApp
-    // 新しい画面を作成するたびに改めて新しいMaterialAppを作成するのは適切ではない
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text("在庫追加"),
+        title: Text("在庫編集"),
         backgroundColor: Color(0xFF222831),
       ),
-      //TextFormFieldにキーボードが重なった場合のエラーを防ぐ(スクロール可能にする)
       body: SingleChildScrollView(
         child: Form(
-          key: _addFormKey,
+          key: _editFormKey,
           child: Column(
             children: <Widget>[
               IconButton(
@@ -315,14 +354,9 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                 ),
                 onPressed: () async {
                   try {
-                    // double.parse()を安全にするためのnullチェック
-
-                    if (_addFormKey.currentState!.validate()) {
-                      // フォームが有効ならば何かを行う
-                      // 例えば、データをサーバに送信するなど
-
+                    if (_editFormKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text('在庫を追加中です')));
+                          .showSnackBar(SnackBar(content: Text('在庫を更新中です')));
                       double? sellingPrice =
                           _sellingPriceController.text.isNotEmpty
                               ? double.parse(_sellingPriceController.text)
@@ -332,8 +366,6 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                           _shippingCostsController.text.isNotEmpty
                               ? double.parse(_shippingCostsController.text)
                               : null;
-
-                      // String image = await uploadImage();
 
                       DateTime dateTime =
                           DateFormat('yyyy-MM-dd').parse(_dateController.text);
@@ -361,10 +393,9 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                           ? Timestamp.fromDate(salesDateTime)
                           : null;
 
-                      final newDocumentReference = inventoriesReference.doc();
+                      final editDocumentReference = inventoriesReference.doc();
 
-                      // FIrestoreに追加するデータ
-                      Inventory newInventory = Inventory(
+                      Inventory updatedInventory = Inventory(
                         imageUrl: imageUrl,
                         date: dateTimestamp,
                         id: _idController.text,
@@ -373,7 +404,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         buyingPrice: double.parse(_buyingPriceController.text),
                         otherCosts: double.parse(_otherCostsController.text),
                         supplier: _supplierController.text,
-                        reference: newDocumentReference,
+                        reference: editDocumentReference,
                         status: _statusController.value!,
                         inspection: false,
                         purchased: false,
@@ -388,8 +419,12 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         revenue: false,
                       );
 
-                      // Firestoreにデータを追加
-                      await inventoriesReference.add(newInventory).then((_) {
+                      // Firestoreのドキュメントを更新
+                      await inventoriesReference
+                          .doc(widget.inventoryId)
+                          .set(updatedInventory.toDocument(),
+                              SetOptions(merge: true))
+                          .then((_) {
                         // データの追加が成功したら前の画面に戻る
                         Navigator.pop(context);
                         // TextFormFieldの値をリセットする
@@ -407,17 +442,17 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         _shippingCostsController.clear();
                         _salesDateController.clear();
                         _statusController.value = InventoryStatus.notListed;
-                      });
-                    } else {
-                      throw Exception('フォーム入力をしてください。');
+                      }).catchError((e) => print(e));
                     }
                   } catch (e) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text('エラーが起きました: $e')));
+                    print(e);
                   }
                 },
-                child: Text('追加する'),
-              ),
+                child: Text(
+                  '更新する',
+                  style: TextStyle(color: Colors.white),
+                ),
+              )
             ],
           ),
         ),
