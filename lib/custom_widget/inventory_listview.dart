@@ -16,7 +16,8 @@ class InventoryList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(inventoriesProvider).when(
-      data: (List<Inventory> inventories) {
+      data: (List<Inventory> inventories) //ここでinventory一覧を取得済み
+          {
         var filteredDocs = inventories
             .where((inventory) => inventory.status == status)
             .toList();
@@ -34,8 +35,8 @@ class InventoryList extends ConsumerWidget {
         return ListView.builder(
           itemCount: filteredDocs.length,
           itemBuilder: (context, index) {
+            // docはInventory一つ一つ
             final doc = filteredDocs[index];
-            String inventoryId;
             return Material(
               // InkWell requires a Material widget
               child: InkWell(
@@ -47,7 +48,7 @@ class InventoryList extends ConsumerWidget {
                         const RelativeRect.fromLTRB(50.0, 50.0, 50.0, 50.0),
                     items: <PopupMenuEntry>[
                       const PopupMenuItem(
-                        child: Text("編集"),
+                        child: Text("編集"), //名前付き引数の簡単な例
                         value: 'edit',
                       ),
                       // PopupMenuItem(
@@ -67,7 +68,10 @@ class InventoryList extends ConsumerWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => EditInventory()),
+                              builder: (context) => EditInventory(
+                                inventoryId: doc.reference.id,
+                              ),
+                            ),
                           );
                         }
                       }

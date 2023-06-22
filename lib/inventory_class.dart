@@ -72,6 +72,8 @@ class Inventory {
       revenue: map['revenue'],
       status: InventoryStatus.values.firstWhere(
           (e) => e.toString() == 'InventoryStatus.${map['status']}'),
+      // リファレンスは、コレクションとドキュメントIDの組み合わせをパスコードで示したもの
+      // uers/userId/ reference.id
       reference: snapshot.reference,
     );
   }

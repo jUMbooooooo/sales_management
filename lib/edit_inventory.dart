@@ -12,7 +12,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'custom_widget/add_inventory_field.dart';
 import 'inventory_class.dart';
-import 'add_inventory.dart';
 
 // フォームの状態を管理するためのキー
 final _editFormKey = GlobalKey<FormState>();
@@ -20,13 +19,14 @@ final _editFormKey = GlobalKey<FormState>();
 class EditInventory extends ConsumerStatefulWidget {
   final String inventoryId; // 編集する在庫のドキュメントID
 
-  EditInventory({required this.inventoryId, super.key});
+  const EditInventory({required this.inventoryId, Key? key}) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _EditInventoryState();
 }
 
 class _EditInventoryState extends ConsumerState<EditInventory> {
+  late String imageUrl;
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -58,22 +58,26 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
               .collection('users') // usersコレクション
               .doc(currentUserId) // 特定のユーザーのドキュメントID
               .collection('inventories') // 特定のユーザーの在庫サブコレクション
-              .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
-        return Inventory.fromFirestore(snapshot);
-      }), toFirestore: ((value, _) {
-        return value.toMap();
-      })).get() as DocumentSnapshot<Map<String, dynamic>>;
+              .doc(widget.inventoryId) // 編集する在庫のドキュメントID
+              .get(); // ドキュメントを取得
+
+      print('[$doc]');
 
       // データが存在しない場合はエラー
       if (!doc.exists) {
         throw Exception('データが見つかりません');
       }
 
+      // inventoryインスタンスの作成
       Inventory inventory = Inventory.fromFirestore(doc);
 
       // 日付形式を用いて Timestamp を String に変換します
-      String purchasedDateStr =
-          inventory.purchasedDate?.toDate().toString() ?? 'No date';
+      String purchasedDateStr = inventory.purchasedDate != null
+          ? DateFormat('yyyy-MM-dd').format(inventory.purchasedDate!.toDate())
+          : '';
+      String salesDateStr = inventory.salesDate != null
+          ? DateFormat('yyyy-MM-dd').format(inventory.salesDate!.toDate())
+          : '';
       _dateController.text =
           DateFormat('yyyy-MM-dd').format(inventory.date.toDate());
       _idController.text = inventory.id;
@@ -86,8 +90,11 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
 
       _purchasedDateontroller.text = purchasedDateStr;
       _sellingPriceController.text = inventory.selligPrice?.toString() ?? '';
+      _sellLocationController.text = inventory.sellLocation ?? '';
+      _shippingCostsController.text = inventory.shippingCost?.toString() ?? '';
+      _salesDateController.text = salesDateStr;
     } catch (e) {
-      print('Failed to fetch inventory: $e');
+      print('エラーが起きました: $e');
     }
   }
 
@@ -338,7 +345,7 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                   if (date != null) {
                     String formattedDate = DateFormat('yyyy-MM-dd')
                         .format(date); // 日付を適切な形式にフォーマット
-                    _purchasedDateontroller.text =
+                    _salesDateController.text =
                         formattedDate; // テキストフィールドに日付を設定
                   }
                 },
@@ -395,7 +402,9 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
 
                       final editDocumentReference = inventoriesReference.doc();
 
+                      // InventoryクラスのインスタンスupdateInventoryを作成
                       Inventory updatedInventory = Inventory(
+                        //コンストラクタ
                         imageUrl: imageUrl,
                         date: dateTimestamp,
                         id: _idController.text,
@@ -417,13 +426,14 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                         //     double.parse(_shippingCostsController.text),
                         salesDate: salesDateTimestamp,
                         revenue: false,
+                        //コンストラクタ
                       );
 
                       // Firestoreのドキュメントを更新
+
                       await inventoriesReference
                           .doc(widget.inventoryId)
-                          .set(updatedInventory.toDocument(),
-                              SetOptions(merge: true))
+                          .set(updatedInventory, SetOptions(merge: true))
                           .then((_) {
                         // データの追加が成功したら前の画面に戻る
                         Navigator.pop(context);
@@ -442,16 +452,14 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                         _shippingCostsController.clear();
                         _salesDateController.clear();
                         _statusController.value = InventoryStatus.notListed;
-                      }).catchError((e) => print(e));
+                      });
                     }
                   } catch (e) {
-                    print(e);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text('エラーが起きました: $e')));
                   }
                 },
-                child: Text(
-                  '更新する',
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: const Text('編集'),
               )
             ],
           ),
