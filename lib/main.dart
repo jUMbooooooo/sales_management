@@ -64,3 +64,4 @@ final inventoriesReference = userReference
 }), toFirestore: ((value, _) {
   return value.toMap();
 }));
+i
