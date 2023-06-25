@@ -169,13 +169,14 @@ class InventoryList extends ConsumerWidget {
           },
         );
       },
-      error: (_, __) {
-        return const Center(
-          child: Text('エラーが出ました。'),
+      error: (_, error) {
+        print('${error.toString()}');
+        return Center(
+          child: Text('エラーが出ました。:${error.toString()}'),
         );
       },
       loading: () {
-        return const Center(
+        return Center(
           child: CircularProgressIndicator(),
         );
       },

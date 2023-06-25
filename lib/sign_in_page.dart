@@ -45,22 +45,6 @@ class _SignInPageState extends State<SignInPage> {
     await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  // // Firebaseの認証(非同期処理)
-  // Future<UserCredential?> signInWithGoogle() async {
-  //   // GoogleSignIn をして得られた情報を Firebase と関連づけることをやっています。
-  //   final googleUser =
-  //       await GoogleSignIn(scopes: ['profile', 'email']).signIn();
-  //   final googleAuth = await googleUser?.authentication;
-
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth?.accessToken,
-  //     idToken: googleAuth?.idToken,
-  //   );
-
-  //   //ここでFirebaseの認証結果を返す
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,3 +82,91 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 }
+
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         // decoration: BoxDecoration(
+//         //   image: DecorationImage(
+//         //     image: AssetImage("assets/background_image.jpg"), //背景画像を設定
+//         //     fit: BoxFit.cover,
+//         //   ),
+//         // ),
+//         child: Center(
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: <Widget>[
+//               Text(
+//                 "ようこそ",
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 40.0,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
+//               SizedBox(height: 30.0),
+//               Text(
+//                 "Sign in to continue",
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 18.0,
+//                 ),
+//               ),
+//               SizedBox(height: 50.0),
+//               ElevatedButton(
+//                 style: ButtonStyle(
+//                   backgroundColor: MaterialStateProperty.all<Color>(
+//                       Colors.white), //ボタンの色を白に設定
+//                   padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+//                     EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+//                   ),
+//                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+//                     RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(30.0),
+//                     ),
+//                   ),
+//                 ),
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: <Widget>[
+//                     // Image(
+//                     //   image:
+//                     //       AssetImage("assets/google_icon.png"), //Googleのアイコンを設定
+//                     //   height: 30.0,
+//                     // ),
+//                     SizedBox(width: 10.0),
+//                     Text(
+//                       'Googleアカウントでサインイン',
+//                       style: TextStyle(
+//                         color: Colors.black,
+//                         fontSize: 20.0,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 onPressed: () async {
+//                   await logout();
+//                   await signInWithGoogle();
+
+//                   if (mounted) {
+//                     // ユーザーが正常に認証され、ユーザー情報が得られたページへ遷移
+//                     print('[$currentUserId],[$currentUserName]');
+
+//                     Navigator.of(context).pushAndRemoveUntil(
+//                       MaterialPageRoute(builder: (cotext) {
+//                         return const InventoryPage();
+//                       }),
+//                       (route) => false,
+//                     );
+//                   }
+//                 },
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

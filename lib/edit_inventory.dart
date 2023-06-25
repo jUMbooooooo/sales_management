@@ -83,15 +83,17 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
       _idController.text = inventory.id;
       _brandController.text = inventory.brand;
       _nameController.text = inventory.name;
-      _buyingPriceController.text = inventory.buyingPrice.toString();
-      _otherCostsController.text = inventory.otherCosts.toString();
+      _buyingPriceController.text = inventory.buyingPrice.toInt().toString();
+      _otherCostsController.text = inventory.otherCosts.toInt().toString();
       _supplierController.text = inventory.supplier;
       _statusController.value = inventory.status;
 
       _purchasedDateontroller.text = purchasedDateStr;
-      _sellingPriceController.text = inventory.selligPrice?.toString() ?? '';
+      _sellingPriceController.text =
+          inventory.selligPrice?.toInt().toString() ?? '';
       _sellLocationController.text = inventory.sellLocation ?? '';
-      _shippingCostsController.text = inventory.shippingCost?.toString() ?? '';
+      _shippingCostsController.text =
+          inventory.shippingCost?.toInt().toString() ?? '';
       _salesDateController.text = salesDateStr;
     } catch (e) {
       print('エラーが起きました: $e');
