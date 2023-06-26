@@ -42,19 +42,7 @@ class _SignInPageState extends State<SignInPage> {
       idToken: googleAuth?.idToken,
     );
 
-    final userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-    // 登録ユーザーまたはサインインユーザーのFirestoreへの保存
-    final user = userCredential.user;
-    final userReference =
-        FirebaseFirestore.instance.collection('users').doc(user?.uid);
-
-    // 初めてのログインなら、ブランドコレクションを作成します
-    final brands = await userReference.collection('brands').get();
-    if (brands.docs.isEmpty) {
-      userReference.collection('brands').add({});
-    }
+    await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
