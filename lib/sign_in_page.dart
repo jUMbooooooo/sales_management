@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -30,31 +30,25 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> signInWithGoogle() async {
-    // 既存のログイン情報をクリア
+// 既存のログイン情報をクリア
+
     // GoogleSignIn をして得られた情報を Firebase と関連づけることをやっています。
     final googleUser =
         await GoogleSignIn(scopes: ['profile', 'email']).signIn();
-
     final googleAuth = await googleUser?.authentication;
-
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
 
-    final userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    await FirebaseAuth.instance.signInWithCredential(credential);
 
-    // 登録ユーザーまたはサインインユーザーのFirestoreへの保存
-    final user = userCredential.user;
-    final userReference =
-        FirebaseFirestore.instance.collection('users').doc(user?.uid);
+    // ログインが完了したらここで currentUser と currentUserId を取得します
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final currentUserId = currentUser.uid;
 
-    // 初めてのログインなら、ブランドコレクションを作成します
-    final brands = await userReference.collection('brands').get();
-    if (brands.docs.isEmpty) {
-      userReference.collection('brands').add({});
-    }
+    print(
+        '[$currentUserId], [${currentUser.displayName}]'); // userId と displayName を確認します
   }
 
   @override
