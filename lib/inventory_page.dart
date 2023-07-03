@@ -26,7 +26,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
       length: 5,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("在庫管理アプリ"),
+          title: const Text("在庫管理"),
           backgroundColor: const Color(0xFF222831),
           bottom: const TabBar(
             tabs: <Widget>[
@@ -45,7 +45,15 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               DrawerHeader(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly, // 子ウィジェット間のスペースを均等に分配
                   children: [
+                    Image.asset(
+                      'assets/images/SedoriManager_Appicons_2_white.png',
+                      width: 140,
+                      height: 50, // 画像の高さを制限します。この値は適宜調整してください
+                      fit: BoxFit.cover, // 画像のアスペクト比を維持しながら、指定した空間にフィットさせます
+                    ),
                     Text(
                       'アカウント',
                       style: TextStyle(

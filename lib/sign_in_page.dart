@@ -55,16 +55,23 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Googleサインイン'),
+        title: Image.asset(
+          'assets/images/SedoriManager_Appicons_2_white.png',
+          height: 140,
+        ),
         backgroundColor: const Color(0xFF222831),
       ),
+      // appBar: AppBar(
+      //   title: const Text('せどりマネージャー'),
+      //   backgroundColor: const Color(0xFF222831),
+      // ),
       body: Center(
         child: ElevatedButton(
           style: ButtonStyle(
             backgroundColor:
                 MaterialStateProperty.all<Color>(const Color(0xFF222831)),
           ),
-          child: const Text('Googleサインイン'),
+          child: const Text('Googleアカウントでサインイン'),
           onPressed: () async {
             await logout();
             await signInWithGoogle();
