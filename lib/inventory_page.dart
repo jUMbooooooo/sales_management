@@ -43,6 +43,9 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Color(0xFF222831),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment:
@@ -54,7 +57,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                       height: 50, // 画像の高さを制限します。この値は適宜調整してください
                       fit: BoxFit.cover, // 画像のアスペクト比を維持しながら、指定した空間にフィットさせます
                     ),
-                    Text(
+                    const Text(
                       'アカウント',
                       style: TextStyle(
                         color: Colors.white,
@@ -63,19 +66,16 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                     ),
                     Text(
                       FirebaseAuth.instance.currentUser?.email ?? '',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                       ),
                     ),
                   ],
                 ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF222831),
-                ),
               ),
               ListTile(
-                title: Text(
+                title: const Text(
                   '設定',
                   style: TextStyle(
                     fontSize: 18,
@@ -89,19 +89,30 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                 },
               ),
               ListTile(
-                title: Text(
+                title: const Text(
                   'ログアウト',
                   style: TextStyle(
                     fontSize: 18,
                   ),
                 ),
-                onTap: () {
+                onTap: () async {
+                  // make it asynchronous
                   // ログアウト処理
-                  FirebaseAuth.instance.signOut();
+                  await FirebaseAuth.instance.signOut();
+
+                  // ログアウトが成功したか確認
+                  if (FirebaseAuth.instance.currentUser == null) {
+                    print('ログアウト成功');
+
+                    // currentUserとcurrentUserIdを空の文字列に設定
+                  } else {
+                    print('ログアウト失敗');
+                  }
 
                   // ログイン画面に遷移
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => SignInPage()),
+                    MaterialPageRoute(builder: (_) => const SignInPage()),
                   );
                 },
               ),
@@ -121,16 +132,16 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           builder: (context) {
             return FloatingActionButton(
               onPressed: () {
-                print('[$currentUserId],[$currentUserName]');
+                // print('[$currentUserId],[$currentUserName]');
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddInventory(),
+                    builder: (context) => const AddInventory(),
                   ),
                 );
               },
-              child: Icon(Icons.add),
-              backgroundColor: Color(0xFF222831),
+              backgroundColor: const Color(0xFF222831),
+              child: const Icon(Icons.add),
             );
           },
         ),
