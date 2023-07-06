@@ -75,7 +75,10 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
                 child: ListView.separated(
                     itemCount: brandNames.length,
                     separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(color: Colors.blueGrey),
+                        const Divider(
+                          color: Colors.blueGrey,
+                          height: 0,
+                        ),
                     itemBuilder: (BuildContext context, int index) {
                       String brandName = brandNames[index];
                       return ListTile(
