@@ -26,7 +26,7 @@ class InventoryList extends ConsumerWidget {
         //     var filteredDocs =
         //         data.docs.where((doc) => doc.data().status == status).toList();
 
-        // print(filteredDocs);
+        print(filteredDocs);
 
         if (filteredDocs.isEmpty) {
           return const SizedBox.shrink();
@@ -48,8 +48,8 @@ class InventoryList extends ConsumerWidget {
                         const RelativeRect.fromLTRB(50.0, 50.0, 50.0, 50.0),
                     items: <PopupMenuEntry>[
                       const PopupMenuItem(
+                        child: Text("編集"), //名前付き引数の簡単な例
                         value: 'edit',
-                        child: Text("編集"),
                       ),
                       // PopupMenuItem(
                       //   child: Text("削除"),
@@ -61,7 +61,7 @@ class InventoryList extends ConsumerWidget {
                   ).then(
                     (value) {
                       if (value != null) {
-                        // print('You selected: $value');
+                        print('You selected: $value');
                         // Here you can handle the selected option
                         // For example, navigate to a different screen or modify the item
                         if (value == "edit") {
@@ -85,7 +85,7 @@ class InventoryList extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: SizedBox(
                           height: 70,
                           width: 70,
@@ -127,9 +127,9 @@ class InventoryList extends ConsumerWidget {
                               children: [
                                 Column(
                                   children: [
-                                    const Text(
+                                    Text(
                                       '仕入れ価格',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 11.0,
                                       ),
@@ -170,13 +170,13 @@ class InventoryList extends ConsumerWidget {
         );
       },
       error: (_, error) {
-        // print('${error.toString()}');
+        print('${error.toString()}');
         return Center(
           child: Text('エラーが出ました。:${error.toString()}'),
         );
       },
       loading: () {
-        return const Center(
+        return Center(
           child: CircularProgressIndicator(),
         );
       },

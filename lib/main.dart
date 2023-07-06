@@ -30,6 +30,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+final currentUser = FirebaseAuth.instance.currentUser!;
+
+final currentUserId = currentUser.uid;
 // final posterName = user.displayName!;
 // final posterImageUrl = user.photoURL!;
 

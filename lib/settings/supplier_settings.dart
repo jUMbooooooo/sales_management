@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +6,7 @@ import 'package:flutter/services.dart';
 class SupplierSettingsPage extends StatefulWidget {
   final String userId;
 
-  const SupplierSettingsPage(this.userId, {super.key});
+  SupplierSettingsPage(this.userId);
 
   @override
   _SupplierSettingsPageState createState() => _SupplierSettingsPageState();
@@ -20,9 +18,9 @@ class _SupplierSettingsPageState extends State<SupplierSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    var currentUser = FirebaseAuth.instance.currentUser!;
+    final currentUser = FirebaseAuth.instance.currentUser!;
 
-    var currentUserId = currentUser.uid;
+    final currentUserId = currentUser.uid;
 
     final userReference =
         FirebaseFirestore.instance.collection('users').doc(currentUserId);
@@ -31,18 +29,18 @@ class _SupplierSettingsPageState extends State<SupplierSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF222831),
-        title: const Text('仕入れ先設定'),
+        backgroundColor: Color(0xFF222831),
+        title: Text('仕入れ先設定'),
       ),
       body: Column(
         children: <Widget>[
           TextField(
             controller: _supplierController,
-            decoration: const InputDecoration(labelText: '仕入れ先名'),
+            decoration: InputDecoration(labelText: '仕入れ先名'),
           ),
           TextField(
             controller: _supplierInfoController,
-            decoration: const InputDecoration(labelText: '仕入れ先情報'),
+            decoration: InputDecoration(labelText: '仕入れ先情報'),
           ),
           // Add a new sales location
           ElevatedButton(
@@ -61,7 +59,7 @@ class _SupplierSettingsPageState extends State<SupplierSettingsPage> {
               backgroundColor:
                   MaterialStateProperty.all<Color>(const Color(0xFF222831)),
             ),
-            child: const Text('仕入れ先を追加'),
+            child: Text('仕入れ先を追加'),
           ),
           // Display the list of sales locations
           StreamBuilder<QuerySnapshot>(
@@ -80,7 +78,7 @@ class _SupplierSettingsPageState extends State<SupplierSettingsPage> {
                       title: Text(data['supplierName']),
                       subtitle: Text(data['supplierInfo']),
                       trailing: IconButton(
-                        icon: const Icon(Icons.delete),
+                        icon: Icon(Icons.delete),
                         onPressed: () {
                           userReference
                               .collection('supplier')
@@ -91,7 +89,7 @@ class _SupplierSettingsPageState extends State<SupplierSettingsPage> {
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) {
-                    return const Divider(
+                    return Divider(
                       color: Colors.grey, // 線の色をグレーに指定
                       height: 10, // 項目間の高さを10に指定
                     );

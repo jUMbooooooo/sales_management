@@ -1,27 +1,23 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:sales_management_app/main.dart';
+import 'package:sales_management_app/main.dart';
 import 'brands_settings.dart';
 import 'supplier_settings.dart';
 import 'platform_settings.dart';
 
-var currentUser = FirebaseAuth.instance.currentUser!;
-var currentUserId = currentUser.uid;
-final String userId = currentUserId;
-
-// ignore: use_key_in_widget_constructors, must_be_immutable
 class SettingsPage extends StatelessWidget {
+  final String userId = currentUserId;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF222831),
-        title: const Text('設定'),
+        backgroundColor: Color(0xFF222831),
+        title: Text('設定'),
       ),
       body: ListView(
         children: <Widget>[
           ListTile(
-            title: const Text('ブランド名'),
+            title: Text('ブランド名'),
             onTap: () {
               final String userId = currentUserId;
               Navigator.push(
@@ -32,22 +28,22 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('仕入れ先'),
+            title: Text('仕入れ先'),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SupplierSettingsPage(userId!)),
+                    builder: (context) => SupplierSettingsPage(userId)),
               );
             },
           ),
           ListTile(
-            title: const Text('販売先'),
+            title: Text('販売先'),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PlatformSettingsPage(userId!)),
+                    builder: (context) => PlatformSettingsPage(userId)),
               );
             },
           ),

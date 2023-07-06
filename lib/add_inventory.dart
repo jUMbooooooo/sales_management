@@ -56,8 +56,8 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text("在庫追加"),
-        backgroundColor: const Color(0xFF222831),
+        title: Text("在庫追加"),
+        backgroundColor: Color(0xFF222831),
       ),
       //TextFormFieldにキーボードが重なった場合のエラーを防ぐ(スクロール可能にする)
       body: SingleChildScrollView(
@@ -77,7 +77,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                     source: ImageSource.gallery,
                     maxWidth: 500,
                   );
-                  // print('${file?.path}');
+                  print('${file?.path}');
 
                   if (file == null) return;
 
@@ -101,17 +101,15 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                     imageUrl = await referenceImageToUpload.getDownloadURL();
                   } catch (error) {
                     // エラーログを出力
-                    // ignore: avoid_print
                     print('Failed to upload image: $error');
 
                     // ユーザーへのフィードバック
-                    // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('画像のアップロードに失敗しました。')),
+                      SnackBar(content: Text('画像のアップロードに失敗しました。')),
                     );
                   }
                 },
-                icon: const Icon(Icons.camera_alt),
+                icon: Icon(Icons.camera_alt),
               ),
               CustomTextFormField(
                 labelText: '日付',
@@ -315,7 +313,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
-                      MaterialStateProperty.all<Color>(const Color(0xFF222831)),
+                      MaterialStateProperty.all<Color>(Color(0xFF222831)),
                 ),
                 onPressed: () async {
                   try {
@@ -325,8 +323,8 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                       // フォームが有効ならば何かを行う
                       // 例えば、データをサーバに送信するなど
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('在庫を追加中です')));
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text('在庫を追加中です')));
                       double? sellingPrice =
                           _sellingPriceController.text.isNotEmpty
                               ? double.parse(_sellingPriceController.text)
@@ -420,7 +418,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         .showSnackBar(SnackBar(content: Text('エラーが起きました: $e')));
                   }
                 },
-                child: const Text('追加する'),
+                child: Text('追加する'),
               ),
             ],
           ),
