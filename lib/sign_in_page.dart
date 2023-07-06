@@ -30,19 +30,25 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> signInWithGoogle() async {
-    // 既存のログイン情報をクリア
+// 既存のログイン情報をクリア
+
     // GoogleSignIn をして得られた情報を Firebase と関連づけることをやっています。
     final googleUser =
         await GoogleSignIn(scopes: ['profile', 'email']).signIn();
-
     final googleAuth = await googleUser?.authentication;
-
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
 
     await FirebaseAuth.instance.signInWithCredential(credential);
+
+    // ログインが完了したらここで currentUser と currentUserId を取得します
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final currentUserId = currentUser.uid;
+
+    print(
+        '[$currentUserId], [${currentUser.displayName}]'); // userId と displayName を確認します
   }
 
   @override
