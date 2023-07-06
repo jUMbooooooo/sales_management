@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+// import 'package:sales_management_app/main.dart';
 
 class BrandsSettingsPage extends StatefulWidget {
   final String userId;
@@ -15,10 +17,14 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference brands = FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.userId)
-        .collection('brands');
+    final currentUser = FirebaseAuth.instance.currentUser!;
+
+    final currentUserId = currentUser.uid;
+
+    final userReference =
+        FirebaseFirestore.instance.collection('users').doc(currentUserId);
+
+    print('userId{$currentUserId}');
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +40,15 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
           ElevatedButton(
             onPressed: () {
               if (_brandController.text.isNotEmpty) {
-                brands.add({'name': _brandController.text});
+                // userReference.update({
+                //   'brandNames': FieldValue.arrayUnion([_brandController.text])
+                // });
+                //updateの場合、ドキュメントが存在しないとエラーがでる。（ドキュメントは存在しているが、フィールドは確かに存在していなかった。）
+                //setにすることで、ドキュメントが存在しない場合は自動生成してくれるようになる。
+                userReference.set({
+                  'brandNames': FieldValue.arrayUnion([_brandController.text])
+                }, SetOptions(merge: true));
+
                 _brandController.clear();
               }
             },
@@ -44,29 +58,40 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
             ),
             child: Text('ブランドを追加'),
           ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: brands.orderBy('name').snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) return const Text('読み込み中...');
-                final List<DocumentSnapshot> documents = snapshot.data!.docs;
+          StreamBuilder<DocumentSnapshot>(
+            stream: userReference.snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (!snapshot.hasData) return const Text('読み込み中...');
+              final DocumentSnapshot document = snapshot.data!;
+              final Map<String, dynamic>? documentData =
+                  document.data() as Map<String, dynamic>?;
+              final List<String> brandNames =
+                  documentData != null && documentData.containsKey('brandNames')
+                      ? List<String>.from(documentData['brandNames'])
+                      : [];
 
-                return ListView(
-                  children: documents.map((DocumentSnapshot document) {
-                    return ListTile(
-                      title: Text(document['name']),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          document.reference.delete();
-                        },
-                      ),
-                    );
-                  }).toList(),
-                );
-              },
-            ),
+              return Expanded(
+                child: ListView.separated(
+                    itemCount: brandNames.length,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(color: Colors.blueGrey),
+                    itemBuilder: (BuildContext context, int index) {
+                      String brandName = brandNames[index];
+                      return ListTile(
+                        title: Text(brandName),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            userReference.update({
+                              'brandNames': FieldValue.arrayRemove([brandName])
+                            });
+                          },
+                        ),
+                      );
+                    }),
+              );
+            },
           ),
         ],
       ),

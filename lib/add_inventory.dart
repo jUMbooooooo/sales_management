@@ -73,8 +73,10 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
 
                   // XFileは　クロスプラットフォームでファイルを扱うためのクラス
                   // Fileに比べて扱える機能が制限されている（クロスプラットフォームに合わせているため）
-                  XFile? file =
-                      await imagePicker.pickImage(source: ImageSource.gallery);
+                  XFile? file = await imagePicker.pickImage(
+                    source: ImageSource.gallery,
+                    maxWidth: 500,
+                  );
                   print('${file?.path}');
 
                   if (file == null) return;

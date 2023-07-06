@@ -5,6 +5,8 @@ import 'supplier_settings.dart';
 import 'platform_settings.dart';
 
 class SettingsPage extends StatelessWidget {
+  final String userId = currentUserId;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +33,7 @@ class SettingsPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SuppliersSettingsPage()),
+                    builder: (context) => SuppliersSettingsPage(userId)),
               );
             },
           ),
@@ -41,7 +43,7 @@ class SettingsPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PlatformsSettingsPage()),
+                    builder: (context) => PlatformSettingsPage(userId)),
               );
             },
           ),
