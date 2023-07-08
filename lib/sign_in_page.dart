@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'inventory_page.dart';
 
-final currentUser = FirebaseAuth.instance.currentUser!;
-
-final currentUserId = currentUser.uid;
-final currentUserName = currentUser.displayName!;
+User? currentUser;
+String? currentUserId;
+String? currentUserName;
 
 //SignInPageのクラス(設計図)
 class SignInPage extends StatefulWidget {
@@ -43,12 +42,15 @@ class _SignInPageState extends State<SignInPage> {
 
     await FirebaseAuth.instance.signInWithCredential(credential);
 
-    // ログインが完了したらここで currentUser と currentUserId を取得します
-    final currentUser = FirebaseAuth.instance.currentUser!;
-    final currentUserId = currentUser.uid;
+    // ログインが完了したらここで currentUser と currentUserId を更新します
+    currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      currentUserId = currentUser!.uid;
+      currentUserName = currentUser!.displayName;
 
-    print(
-        '[$currentUserId], [${currentUser.displayName}]'); // userId と displayName を確認します
+      print(
+          '[$currentUserId], [${currentUserName}]'); // userId と displayName を確認します
+    }
   }
 
   @override
@@ -73,6 +75,7 @@ class _SignInPageState extends State<SignInPage> {
           ),
           child: const Text('Googleアカウントでサインイン'),
           onPressed: () async {
+            print('currentUser[$currentUser]/currentUserId[$currentUserId]');
             await logout();
             await signInWithGoogle();
             // ログインが成功すると FirebaseAuth.instance.currentUser にログイン中のユーザーの情報が入ります

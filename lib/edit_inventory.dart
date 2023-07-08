@@ -110,15 +110,15 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
       future: fetchAndSetData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.error != null) {
-          return Center(child: Text('エラーが発生しました'));
+          return const Center(child: Text('エラーが発生しました'));
         } else {
           return Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: true,
-              title: Text("在庫編集"),
-              backgroundColor: Color(0xFF222831),
+              title: const Text("在庫編集"),
+              backgroundColor: const Color(0xFF222831),
             ),
             body: SingleChildScrollView(
               child: Form(
@@ -166,11 +166,11 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
 
                           // ユーザーへのフィードバック
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('画像のアップロードに失敗しました。')),
+                            const SnackBar(content: Text('画像のアップロードに失敗しました。')),
                           );
                         }
                       },
-                      icon: Icon(Icons.camera_alt),
+                      icon: const Icon(Icons.camera_alt),
                     ),
                     CustomTextFormField(
                       labelText: '日付',
@@ -376,14 +376,14 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xFF222831)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFF222831)),
                       ),
                       onPressed: () async {
                         try {
                           if (_editFormKey.currentState!.validate()) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('在庫を更新中です')));
+                                const SnackBar(content: Text('在庫を更新中です')));
                             double? sellingPrice =
                                 _sellingPriceController.text.isNotEmpty
                                     ? double.parse(_sellingPriceController.text)

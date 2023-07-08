@@ -56,8 +56,8 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text("在庫追加"),
-        backgroundColor: Color(0xFF222831),
+        title: const Text("在庫追加"),
+        backgroundColor: const Color(0xFF222831),
       ),
       //TextFormFieldにキーボードが重なった場合のエラーを防ぐ(スクロール可能にする)
       body: SingleChildScrollView(
@@ -105,11 +105,11 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
 
                     // ユーザーへのフィードバック
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('画像のアップロードに失敗しました。')),
+                      const SnackBar(content: Text('画像のアップロードに失敗しました。')),
                     );
                   }
                 },
-                icon: Icon(Icons.camera_alt),
+                icon: const Icon(Icons.camera_alt),
               ),
               CustomTextFormField(
                 labelText: '日付',
@@ -313,7 +313,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
-                      MaterialStateProperty.all<Color>(Color(0xFF222831)),
+                      MaterialStateProperty.all<Color>(const Color(0xFF222831)),
                 ),
                 onPressed: () async {
                   try {
@@ -323,8 +323,8 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                       // フォームが有効ならば何かを行う
                       // 例えば、データをサーバに送信するなど
 
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text('在庫を追加中です')));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('在庫を追加中です')));
                       double? sellingPrice =
                           _sellingPriceController.text.isNotEmpty
                               ? double.parse(_sellingPriceController.text)
@@ -418,7 +418,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         .showSnackBar(SnackBar(content: Text('エラーが起きました: $e')));
                   }
                 },
-                child: Text('追加する'),
+                child: const Text('追加する'),
               ),
             ],
           ),
