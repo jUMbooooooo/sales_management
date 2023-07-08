@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales_management_app/firebase_options.dart';
 import 'package:sales_management_app/inventory_class.dart';
-import 'sign_in_page.dart';
+import 'signIn_page.dart';
+// import 'package:sales_management_app/user_notifier.dart';
 
 // Firebaseの初期化
 Future<void> main() async {
