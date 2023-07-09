@@ -11,7 +11,8 @@ class CustomTextFormField extends StatelessWidget {
   final String? suffixText;
   final List<TextInputFormatter>? inputFormatters;
 
-  CustomTextFormField({
+  const CustomTextFormField({
+    super.key,
     required this.labelText,
     this.readOnly = false,
     required this.onTap,
@@ -27,9 +28,9 @@ class CustomTextFormField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        readOnly: this.readOnly,
+        readOnly: readOnly,
         decoration: InputDecoration(
-          suffixText: this.suffixText,
+          suffixText: suffixText,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(
@@ -41,7 +42,7 @@ class CustomTextFormField extends StatelessWidget {
             fontSize: 15,
             color: Colors.grey,
           ),
-          labelText: this.labelText,
+          labelText: labelText,
           floatingLabelStyle: const TextStyle(fontSize: 12),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -51,11 +52,11 @@ class CustomTextFormField extends StatelessWidget {
             ),
           ),
         ),
-        onTap: () => this.onTap(),
-        controller: this.controller,
-        validator: this.validator,
-        keyboardType: this.keyboardType,
-        inputFormatters: this.inputFormatters,
+        onTap: () => onTap(),
+        controller: controller,
+        validator: validator,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
       ),
     );
   }
@@ -70,6 +71,7 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
   final String Function(T) displayText;
 
   CustomDropdownButtonFormField({
+    super.key,
     required this.labelText,
     this.value,
     required this.items,
