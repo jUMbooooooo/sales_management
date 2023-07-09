@@ -6,10 +6,9 @@ import 'package:flutter/services.dart';
 class PlatformSettingsPage extends StatefulWidget {
   final String userId;
 
-  const PlatformSettingsPage(this.userId, {super.key});
+  PlatformSettingsPage(this.userId);
 
   @override
-  // ignore: library_private_types_in_public_api
   _PlatformSettingsPageState createState() => _PlatformSettingsPageState();
 }
 
@@ -30,18 +29,18 @@ class _PlatformSettingsPageState extends State<PlatformSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF222831),
-        title: const Text('販売先設定'),
+        backgroundColor: Color(0xFF222831),
+        title: Text('販売先設定'),
       ),
       body: Column(
         children: <Widget>[
           TextField(
             controller: _platformController,
-            decoration: const InputDecoration(labelText: '販売先を追加'),
+            decoration: InputDecoration(labelText: '販売先を追加'),
           ),
           TextField(
             controller: _feeRateController,
-            decoration: const InputDecoration(labelText: '手数料率を追加'),
+            decoration: InputDecoration(labelText: '手数料率を追加'),
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
@@ -66,7 +65,7 @@ class _PlatformSettingsPageState extends State<PlatformSettingsPage> {
               backgroundColor:
                   MaterialStateProperty.all<Color>(const Color(0xFF222831)),
             ),
-            child: const Text('販売先を追加'),
+            child: Text('販売先を追加'),
           ),
           // Display the list of sales locations
           StreamBuilder<QuerySnapshot>(
@@ -86,7 +85,7 @@ class _PlatformSettingsPageState extends State<PlatformSettingsPage> {
                       subtitle: Text(
                           '手数料率: ${(data['feeRate'] * 100).toStringAsFixed(2)}%'), // 小数点以下2桁に制限
                       trailing: IconButton(
-                        icon: const Icon(Icons.delete),
+                        icon: Icon(Icons.delete),
                         onPressed: () {
                           userReference
                               .collection('sellLocation')
@@ -97,7 +96,7 @@ class _PlatformSettingsPageState extends State<PlatformSettingsPage> {
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) {
-                    return const Divider(
+                    return Divider(
                       color: Colors.grey,
                       height: 0,
                     ); // ここで項目間に挿入するウィジェットを定義します

@@ -5,7 +5,7 @@ import 'package:sales_management_app/inventory_class.dart';
 // import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'add_inventory.dart';
 import 'custom_widget/inventory_listview.dart';
-import 'signIn_page.dart';
+import 'sign_in_page.dart';
 import 'settings/setting_page.dart';
 
 // 在庫情報を表示するページ
@@ -43,9 +43,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF222831),
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment:
@@ -57,7 +54,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                       height: 50, // 画像の高さを制限します。この値は適宜調整してください
                       fit: BoxFit.cover, // 画像のアスペクト比を維持しながら、指定した空間にフィットさせます
                     ),
-                    const Text(
+                    Text(
                       'アカウント',
                       style: TextStyle(
                         color: Colors.white,
@@ -66,16 +63,19 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                     ),
                     Text(
                       FirebaseAuth.instance.currentUser?.email ?? '',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                       ),
                     ),
                   ],
                 ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF222831),
+                ),
               ),
               ListTile(
-                title: const Text(
+                title: Text(
                   '設定',
                   style: TextStyle(
                     fontSize: 18,
@@ -89,7 +89,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                 },
               ),
               ListTile(
-                title: const Text(
+                title: Text(
                   'ログアウト',
                   style: TextStyle(
                     fontSize: 18,
@@ -101,7 +101,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
 
                   // ログイン画面に遷移
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SignInPage()),
+                    MaterialPageRoute(builder: (_) => SignInPage()),
                   );
                 },
               ),
@@ -125,12 +125,12 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AddInventory(),
+                    builder: (context) => AddInventory(),
                   ),
                 );
               },
-              backgroundColor: const Color(0xFF222831),
-              child: const Icon(Icons.add),
+              child: Icon(Icons.add),
+              backgroundColor: Color(0xFF222831),
             );
           },
         ),

@@ -28,14 +28,14 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF222831),
-        title: const Text('ブランド設定'),
+        backgroundColor: Color(0xFF222831),
+        title: Text('ブランド設定'),
       ),
       body: Column(
         children: <Widget>[
           TextField(
             controller: _brandController,
-            decoration: const InputDecoration(labelText: 'ブランド名を追加'),
+            decoration: InputDecoration(labelText: 'ブランド名を追加'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -56,7 +56,7 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
               backgroundColor:
                   MaterialStateProperty.all<Color>(const Color(0xFF222831)),
             ),
-            child: const Text('ブランドを追加'),
+            child: Text('ブランドを追加'),
           ),
           StreamBuilder<DocumentSnapshot>(
             stream: userReference.snapshots(),
@@ -84,7 +84,7 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
                       return ListTile(
                         title: Text(brandName),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: Icon(Icons.delete),
                           onPressed: () {
                             userReference.update({
                               'brandNames': FieldValue.arrayRemove([brandName])

@@ -4,7 +4,6 @@ import 'brands_settings.dart';
 import 'supplier_settings.dart';
 import 'platform_settings.dart';
 
-// ignore: use_key_in_widget_constructors
 class SettingsPage extends StatelessWidget {
   final String userId = currentUserId;
 
@@ -12,13 +11,13 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF222831),
-        title: const Text('設定'),
+        backgroundColor: Color(0xFF222831),
+        title: Text('設定'),
       ),
       body: ListView(
         children: <Widget>[
           ListTile(
-            title: const Text('ブランド名'),
+            title: Text('ブランド名'),
             onTap: () {
               final String userId = currentUserId;
               Navigator.push(
@@ -29,7 +28,7 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('仕入れ先'),
+            title: Text('仕入れ先'),
             onTap: () {
               Navigator.push(
                 context,
@@ -39,7 +38,7 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('販売先'),
+            title: Text('販売先'),
             onTap: () {
               Navigator.push(
                 context,

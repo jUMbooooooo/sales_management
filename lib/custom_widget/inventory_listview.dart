@@ -85,7 +85,7 @@ class InventoryList extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: SizedBox(
                           height: 70,
                           width: 70,
@@ -127,9 +127,9 @@ class InventoryList extends ConsumerWidget {
                               children: [
                                 Column(
                                   children: [
-                                    const Text(
+                                    Text(
                                       '仕入れ価格',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 11.0,
                                       ),
@@ -176,7 +176,7 @@ class InventoryList extends ConsumerWidget {
         );
       },
       loading: () {
-        return const Center(
+        return Center(
           child: CircularProgressIndicator(),
         );
       },
