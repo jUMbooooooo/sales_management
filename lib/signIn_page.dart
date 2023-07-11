@@ -85,12 +85,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           child: const Text('Googleアカウントでサインイン'),
           onPressed: () async {
             // ユーザー通知者を取得します。
-            final userNotifier = context.read(userProvider);
+            // final userNotifier = context.read(userProvider);
 
-            print('currentUser[$currentUser]/currentUserId[$currentUserId]');
-            await logout(userNotifier); // ログアウトのメソッドにuserNotifierを渡します
-            await signInWithGoogle(
-                userNotifier); // signInWithGoogleメソッドにuserNotifierを渡します
+            // print('currentUser[$currentUser]/currentUserId[$currentUserId]');
+            // await logout(userNotifier); // ログアウトのメソッドにuserNotifierを渡します
+            // await signInWithGoogle(
+            //     userNotifier); // signInWithGoogleメソッドにuserNotifierを渡します
 
             if (mounted) {
               // ユーザーが正常に認証され、ユーザー情報が得られたページへ遷移
