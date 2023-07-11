@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales_management_app/firebase_options.dart';
 import 'package:sales_management_app/inventory_class.dart';
-import 'signIn_page.dart';
+import 'sign_in_page.dart';
 // import 'package:sales_management_app/user_notifier.dart';
 
 // Firebaseの初期化
@@ -31,13 +30,13 @@ class MyApp extends StatelessWidget {
   }
 }
 
-final currentUser = FirebaseAuth.instance.currentUser!;
+// final currentUser = FirebaseAuth.instance.currentUser!;
 
-final currentUserId = currentUser.uid;
-// final posterName = user.displayName!;
-// final posterImageUrl = user.photoURL!;
+// final currentUserId = currentUser.uid;
+// // final posterName = user.displayName!;
+// // final posterImageUrl = user.photoURL!;
 
-final userReference =
+var userReference =
     FirebaseFirestore.instance.collection('users').doc(currentUserId);
 
 //このwithConverterではinventoriesというコレクションにInventoryが入ることが想定されている
@@ -58,7 +57,7 @@ final userReference =
 
 // サブコレクション実装のコード
 
-final inventoriesReference = userReference
+var inventoriesReference = userReference
     .collection('inventories')
     .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
   return Inventory.fromFirestore(snapshot);

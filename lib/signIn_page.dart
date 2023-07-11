@@ -6,10 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sales_management_app/user_notifier.dart';
 import 'inventory_page.dart';
+import 'sign_in_page.dart';
 
-User? currentUser;
-String? currentUserId;
-String? currentUserName;
+// User? currentUser;
+// String? currentUserId;
+// String? currentUserName;
 
 //SignInPageのクラス(設計図)
 class SignInPage extends ConsumerStatefulWidget {

@@ -5,7 +5,7 @@ import 'package:sales_management_app/inventory_class.dart';
 // import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'add_inventory.dart';
 import 'custom_widget/inventory_listview.dart';
-import 'signIn_page.dart';
+import 'sign_in_page.dart';
 import 'settings/setting_page.dart';
 
 // 在庫情報を表示するページ
@@ -98,6 +98,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                 onTap: () {
                   // ログアウト処理
                   FirebaseAuth.instance.signOut();
+                  User? currentUser = null;
+                  var currentUserId = '';
+                  var currentUserName = '';
+
+                  print('currentUserName[$currentUserName]');
 
                   // ログイン画面に遷移
                   Navigator.of(context).pushReplacement(

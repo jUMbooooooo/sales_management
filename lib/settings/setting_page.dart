@@ -3,10 +3,11 @@ import 'package:sales_management_app/main.dart';
 import 'brands_settings.dart';
 import 'supplier_settings.dart';
 import 'platform_settings.dart';
+import 'package:sales_management_app/sign_in_page.dart';
 
 // ignore: use_key_in_widget_constructors
 class SettingsPage extends StatelessWidget {
-  final String userId = currentUserId;
+  // final String userId = currentUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class SettingsPage extends StatelessWidget {
           ListTile(
             title: const Text('ブランド名'),
             onTap: () {
-              final String userId = currentUserId;
+              String userId = currentUserId;
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -31,6 +32,7 @@ class SettingsPage extends StatelessWidget {
           ListTile(
             title: const Text('仕入れ先'),
             onTap: () {
+              String userId = currentUserId;
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -41,6 +43,7 @@ class SettingsPage extends StatelessWidget {
           ListTile(
             title: const Text('販売先'),
             onTap: () {
+              String userId = currentUserId;
               Navigator.push(
                 context,
                 MaterialPageRoute(

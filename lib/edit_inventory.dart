@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sales_management_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'sign_in_page.dart';
 import 'custom_widget/add_inventory_field.dart';
 import 'inventory_class.dart';
 
