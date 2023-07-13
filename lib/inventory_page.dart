@@ -19,6 +19,13 @@ class InventoryPage extends ConsumerStatefulWidget {
 }
 
 class _InventoryPageState extends ConsumerState<InventoryPage> {
+  // Future<void> logout(WidgetRef ref) async {
+  //   await FirebaseAuth.instance.signOut(); // ログアウト
+  //   await Future.delayed(const Duration(seconds: 1));
+  //   ref.refresh(inventoriesProvider); // Providerのリセット
+  //   print('currentUserName[$currentUserName]');
+  // }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -95,16 +102,18 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                     fontSize: 18,
                   ),
                 ),
-                onTap: () {
+                onTap: () async {
+                  // await logout(ref); // ログアウト処理
                   // ログアウト処理
                   FirebaseAuth.instance.signOut();
-                  User? currentUser = null;
-                  var currentUserId = '';
-                  var currentUserName = '';
-
+                  // // User? currentUser = null;
+                  // // var currentUserId = '';
+                  // // var currentUserName = '';
+                  // context.refresh(inventoriesProvider); // Providerのリセット
                   print('currentUserName[$currentUserName]');
 
                   // ログイン画面に遷移
+                  // await Future.delayed(const Duration(seconds: 1));
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => const SignInPage()),
                   );
