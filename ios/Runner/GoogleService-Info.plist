@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>914173587363-l8n4rn2oeroeqfaj1pt9je68qnlcg8to.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.914173587363-l8n4rn2oeroeqfaj1pt9je68qnlcg8to</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>914173587363-44oqqf3c8u8qs58jr6t9ufnetjflhf6g.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDxgDsPruCfnVYqhXakJ8PeJBmCTb3ydUA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>914173587363</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.jumbo.salesManagementApp</string>
+	<key>PROJECT_ID</key>
+	<string>sales-management-1e397</string>
+	<key>STORAGE_BUCKET</key>
+	<string>sales-management-1e397.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:914173587363:ios:a881b2939b6bbb79d2f416</string>
+</dict>
+</plist>
