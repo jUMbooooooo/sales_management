@@ -5,14 +5,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales_management_app/firebase_options.dart';
 import 'package:sales_management_app/inventory_class.dart';
 import 'sign_in_page.dart';
-// import 'package:sales_management_app/user_notifier.dart';
+import 'dart:io';
 
 // Firebaseの初期化
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.android,
-  );
+
+  // Platform specific initialization
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.android,
+    );
+  } else if (Platform.isIOS) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.ios,
+    );
+  }
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -30,32 +39,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// final currentUser = FirebaseAuth.instance.currentUser!;
-
-// final currentUserId = currentUser.uid;
-// // final posterName = user.displayName!;
-// // final posterImageUrl = user.photoURL!;
-
 var userReference =
     FirebaseFirestore.instance.collection('users').doc(currentUserId);
-
-//このwithConverterではinventoriesというコレクションにInventoryが入ることが想定されている
-//しかし、Firebaseを確認するとinventoryというコレクションにデータが入っている
-//原因は、add_inventory.dartにあるonpressedの中身
-//onpressedの中身でfirestoreDatabaseに飛ばすときにinventoryというクラスで送っている
-// withCOnverterを使って、Firestoreへの接続の窓口をコレクションにしている
-
-// なぜユーザーのサブコレクションがうまくいったのか。
-
-// final inventoriesReference = FirebaseFirestore.instance
-//     .collection('inventories')
-//     .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
-//   return Inventory.fromFirestore(snapshot);
-// }), toFirestore: ((value, _) {
-//   return value.toMap();
-// }));
-
-// サブコレクション実装のコード
 
 var inventoriesReference = userReference
     .collection('inventories')
