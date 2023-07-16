@@ -17,10 +17,15 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 <<<<<<< HEAD
+<<<<<<< HEAD
 		A47B1FC81E2B526F4ADC255E /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9F3A2DEF176FF547D1E6ECF /* Pods_RunnerTests.framework */; };
 		E187006837D2D63E42C0C29C /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9AAE478E0B1A5ACAC7EFDC9 /* Pods_Runner.framework */; };
 =======
 >>>>>>> parent of a2eef5e (iosアプリ)
+=======
+		A47B1FC81E2B526F4ADC255E /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9F3A2DEF176FF547D1E6ECF /* Pods_RunnerTests.framework */; };
+		E187006837D2D63E42C0C29C /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9AAE478E0B1A5ACAC7EFDC9 /* Pods_Runner.framework */; };
+>>>>>>> 82c35d6fcd61161fa74aa7326a1e94095fc023b7
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -142,10 +147,15 @@
 				114F95BA2A6404AC0063CFA6 /* RunnerTests */,
 				97C146EF1CF9000F007C117D /* Products */,
 <<<<<<< HEAD
+<<<<<<< HEAD
 				678D74B46976CDDD0A911EFA /* Pods */,
 				3C00A5753C4D1CC5489D4213 /* Frameworks */,
 =======
 >>>>>>> parent of a2eef5e (iosアプリ)
+=======
+				678D74B46976CDDD0A911EFA /* Pods */,
+				3C00A5753C4D1CC5489D4213 /* Frameworks */,
+>>>>>>> 82c35d6fcd61161fa74aa7326a1e94095fc023b7
 			);
 			sourceTree = "<group>";
 		};
@@ -275,9 +285,13 @@
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 <<<<<<< HEAD
+<<<<<<< HEAD
 				114F95C42A64072D0063CFA6 /* GoogleService-Info.plist in Resources */,
 =======
 >>>>>>> parent of a2eef5e (iosアプリ)
+=======
+				114F95C42A64072D0063CFA6 /* GoogleService-Info.plist in Resources */,
+>>>>>>> 82c35d6fcd61161fa74aa7326a1e94095fc023b7
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,6 +305,7 @@
 			files = (
 			);
 			inputPaths = (
+				"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}",
 			);
 			name = "Thin Binary";
 			outputPaths = (
@@ -572,7 +587,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.salesManagementApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jumbo.salesManagementApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -700,7 +715,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.salesManagementApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jumbo.salesManagementApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -722,7 +737,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.salesManagementApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jumbo.salesManagementApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
