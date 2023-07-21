@@ -110,7 +110,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                   // // var currentUserId = '';
                   // // var currentUserName = '';
                   // context.refresh(inventoriesProvider); // Providerのリセット
-                  print('currentUserName[$currentUserName]');
+                  // print('currentUserName[$currentUserName]');
 
                   // ログイン画面に遷移
                   // await Future.delayed(const Duration(seconds: 1));
@@ -135,7 +135,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           builder: (context) {
             return FloatingActionButton(
               onPressed: () {
-                print('[$currentUserId],[$currentUserName]');
+                // print('[$currentUserId],[$currentUserName]');
                 Navigator.push(
                   context,
                   MaterialPageRoute(
