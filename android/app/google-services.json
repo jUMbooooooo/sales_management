@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "914173587363-k25rrqcpqk4j0iasbe0o171hmgms6eii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jumbo.salesmanagemet",
+            "certificate_hash": "b2c942ec1182849286c2e4b4bc76dac2ae63b01f"
+          }
+        },
+        {
           "client_id": "914173587363-pkqv55j52on8680ks0jv6r7oik969rla.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

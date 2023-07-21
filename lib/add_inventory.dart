@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sales_management_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sales_management_app/provider/inventory_provider.dart';
 
 import 'inventory_class.dart';
 import 'custom_widget/add_inventory_field.dart';
@@ -363,7 +364,10 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                           ? Timestamp.fromDate(salesDateTime)
                           : null;
 
-                      final newDocumentReference = inventoriesReference.doc();
+                      final inventoriesReference =
+                          ref.watch(inventoriesReferenceProvider);
+
+                      final newDocumentReference = inventoriesReference?.doc();
 
                       // FIrestoreに追加するデータ
                       Inventory newInventory = Inventory(
@@ -375,7 +379,8 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         buyingPrice: double.parse(_buyingPriceController.text),
                         otherCosts: double.parse(_otherCostsController.text),
                         supplier: _supplierController.text,
-                        reference: newDocumentReference,
+                        reference:
+                            newDocumentReference as DocumentReference<Object?>,
                         status: _statusController.value!,
                         inspection: false,
                         purchased: false,
@@ -391,7 +396,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                       );
 
                       // Firestoreにデータを追加
-                      await inventoriesReference.add(newInventory).then((_) {
+                      await inventoriesReference?.add(newInventory).then((_) {
                         // データの追加が成功したら前の画面に戻る
                         Navigator.pop(context);
                         // TextFormFieldの値をリセットする

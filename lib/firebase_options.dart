@@ -59,12 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDxgDsPruCfnVYqhXakJ8PeJBmCTb3ydUA',
-    appId: '1:914173587363:ios:a881b2939b6bbb79d2f416',
+    appId: '1:914173587363:ios:3e97247684e2ba3cd2f416',
     messagingSenderId: '914173587363',
     projectId: 'sales-management-1e397',
     storageBucket: 'sales-management-1e397.appspot.com',
     androidClientId: '914173587363-44oqqf3c8u8qs58jr6t9ufnetjflhf6g.apps.googleusercontent.com',
-    iosClientId: '914173587363-l8n4rn2oeroeqfaj1pt9je68qnlcg8to.apps.googleusercontent.com',
-    iosBundleId: 'com.jumbo.salesManagementApp',
+    iosClientId: '914173587363-nnigqdmt44e4s62rkq7dhhmn0baas6qj.apps.googleusercontent.com',
+    iosBundleId: 'com.jumbo.RunnerTests',
   );
 }

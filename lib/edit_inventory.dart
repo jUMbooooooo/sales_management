@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sales_management_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'sign_in_page.dart';
 import 'custom_widget/add_inventory_field.dart';
 import 'inventory_class.dart';
@@ -53,10 +54,12 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
 
   Future<void> fetchAndSetData() async {
     try {
+      final userId = ref.watch(userIdProvider);
+
       DocumentSnapshot<Map<String, dynamic>> doc =
           await FirebaseFirestore.instance
               .collection('users') // usersコレクション
-              .doc(currentUserId) // 特定のユーザーのドキュメントID
+              .doc(userId) // 特定のユーザーのドキュメントID
               .collection('inventories') // 特定のユーザーの在庫サブコレクション
               .doc(widget.inventoryId) // 編集する在庫のドキュメントID
               .get(); // ドキュメントを取得
@@ -422,8 +425,11 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                                     ? Timestamp.fromDate(salesDateTime)
                                     : null;
 
+                            final inventoriesReference =
+                                ref.watch(inventoriesReferenceProvider);
+
                             final editDocumentReference =
-                                inventoriesReference.doc();
+                                inventoriesReference?.doc();
 
                             // InventoryクラスのインスタンスupdateInventoryを作成
                             Inventory updatedInventory = Inventory(
@@ -438,7 +444,8 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                               otherCosts:
                                   double.parse(_otherCostsController.text),
                               supplier: _supplierController.text,
-                              reference: editDocumentReference,
+                              reference: editDocumentReference
+                                  as DocumentReference<Object?>,
                               status: _statusController.value!,
                               inspection: false,
                               purchased: false,
@@ -456,7 +463,7 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
 
                             // Firestoreのドキュメントを更新
 
-                            await inventoriesReference
+                            await inventoriesReference!
                                 .doc(widget.inventoryId)
                                 .set(updatedInventory, SetOptions(merge: true))
                                 .then((_) {

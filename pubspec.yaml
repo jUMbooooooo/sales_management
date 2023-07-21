@@ -59,7 +59,9 @@ flutter:
   
   uses-material-design: true
 
-flutter_icons:
+flutter_launcher_icons:
  android: true
- ios: false
- image_path: "assets/images/SedoriManager_Appicons_1_ver2.png"
+ ios: true
+ remove_alpha_ios: true
+ image_path_android: "assets/images/SedoriManager_Appicons_1_ver2.png"
+ image_path_ios: "assets/images/SedoriManager_Appicons_1_ver4.png"

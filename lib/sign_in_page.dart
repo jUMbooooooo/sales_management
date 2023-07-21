@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'inventory_page.dart';
 
-User currentUser = FirebaseAuth.instance.currentUser!;
+// User currentUser = FirebaseAuth.instance.currentUser!;
 
-var currentUserId = currentUser.uid;
-var currentUserName = currentUser.displayName!;
+// var currentUserId = currentUser.uid;
+// var currentUserName = currentUser.displayName!;
 
 //SignInPageのクラス(設計図)
 class SignInPage extends StatefulWidget {
@@ -42,10 +42,10 @@ class _SignInPageState extends State<SignInPage> {
     await FirebaseAuth.instance.signInWithCredential(credential);
 
     // ログインが完了したらここで currentUser と currentUserId を取得します
-    var currentUser = FirebaseAuth.instance.currentUser!;
-    var currentUserId = currentUser.uid;
+    // var currentUser = FirebaseAuth.instance.currentUser!;
+    // var currentUserId = currentUser.uid;
 
-    print('ユーザーネーム[$currentUserName]'); // userId と displayName を確認します
+    // print('ユーザーネーム[$currentUserName]'); // userId と displayName を確認します
   }
 
   @override
@@ -77,7 +77,7 @@ class _SignInPageState extends State<SignInPage> {
 
             if (mounted) {
               // ユーザーが正常に認証され、ユーザー情報が得られたページへ遷移
-              print('ユーザーネーム[$currentUserName]');
+              // print('ユーザーネーム[$currentUserName]');
 
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (cotext) {
