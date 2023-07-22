@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../inventory_class.dart';
+import '/inventory_class.dart';
 // import 'package:sales_management_app/main.dart';
 
 // リアルタイムでユーザー情報を監視するProviderが理想

@@ -10,8 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sales_management_app/provider/inventory_provider.dart';
 
-import 'inventory_class.dart';
-import 'custom_widget/add_inventory_field.dart';
+import '../inventory_class.dart';
+import '../custom_widget/add_inventory_field.dart';
 
 // フォームの状態を管理するためのキー
 final _addFormKey = GlobalKey<FormState>();

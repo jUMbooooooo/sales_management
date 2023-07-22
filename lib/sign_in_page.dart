@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'inventory_page.dart';
+import 'base_page.dart';
 
 // User currentUser = FirebaseAuth.instance.currentUser!;
 
@@ -81,7 +81,9 @@ class _SignInPageState extends State<SignInPage> {
 
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (cotext) {
-                  return const InventoryPage();
+                  return const BasePage(
+                    title: '',
+                  );
                 }),
                 (route) => false,
               );

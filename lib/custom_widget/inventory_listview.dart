@@ -3,7 +3,7 @@ import 'package:sales_management_app/inventory_class.dart';
 import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../edit_inventory.dart';
+import '../inventories_page/edit_inventory.dart';
 
 class InventoryList extends ConsumerWidget {
   final InventoryStatus status;
