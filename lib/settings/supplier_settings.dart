@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:flutter/services.dart';
 
-class SupplierSettingsPage extends StatefulWidget {
+class SupplierSettingsPage extends ConsumerStatefulWidget {
   final String userId;
 
-  const SupplierSettingsPage(this.userId, {super.key});
+  const SupplierSettingsPage(this.userId, {Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _SupplierSettingsPageState createState() => _SupplierSettingsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _SupplierSettingsPageState();
 }
 
-class _SupplierSettingsPageState extends State<SupplierSettingsPage> {
+class _SupplierSettingsPageState extends ConsumerState<SupplierSettingsPage> {
   final TextEditingController _supplierController = TextEditingController();
   final TextEditingController _supplierInfoController = TextEditingController();
 

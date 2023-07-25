@@ -111,7 +111,13 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
         items: this.items.map<DropdownMenuItem<T>>((T value) {
           return DropdownMenuItem<T>(
             value: value,
-            child: Text(displayText(value)),
+            child: SizedBox(
+              height: 40.0, // 項目の縦幅を指定
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(displayText(value)),
+              ),
+            ),
           );
         }).toList(),
         onChanged: (T? newValue) {

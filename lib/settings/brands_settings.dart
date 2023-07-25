@@ -1,30 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:sales_management_app/main.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sales_management_app/provider/inventory_provider.dart';
 
-class BrandsSettingsPage extends StatefulWidget {
+class BrandsSettingPage extends ConsumerStatefulWidget {
   final String userId;
 
-  BrandsSettingsPage(this.userId);
+  const BrandsSettingPage(this.userId, {Key? key}) : super(key: key);
 
   @override
-  _BrandsSettingsPageState createState() => _BrandsSettingsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _BrandsSettingPageState();
 }
 
-class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
+class _BrandsSettingPageState extends ConsumerState<BrandsSettingPage> {
   final TextEditingController _brandController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser!;
-
-    final currentUserId = currentUser.uid;
-
-    final userReference =
-        FirebaseFirestore.instance.collection('users').doc(currentUserId);
-
-    print('userId{$currentUserId}');
+    final userReference = ref.watch(userReferenceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +39,7 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
                 // });
                 //updateの場合、ドキュメントが存在しないとエラーがでる。（ドキュメントは存在しているが、フィールドは確かに存在していなかった。）
                 //setにすることで、ドキュメントが存在しない場合は自動生成してくれるようになる。
-                userReference.set({
+                userReference!.set({
                   'brandNames': FieldValue.arrayUnion([_brandController.text])
                 }, SetOptions(merge: true));
 
@@ -59,7 +53,7 @@ class _BrandsSettingsPageState extends State<BrandsSettingsPage> {
             child: const Text('ブランドを追加'),
           ),
           StreamBuilder<DocumentSnapshot>(
-            stream: userReference.snapshots(),
+            stream: userReference!.snapshots(),
             builder: (BuildContext context,
                 AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (!snapshot.hasData) return const Text('読み込み中...');

@@ -107,6 +107,8 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
 
   @override
   Widget build(BuildContext context) {
+    final brandNames = ref.watch(brandNamesProvider);
+
     return FutureBuilder<void>(
       future: fetchAndSetData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -216,16 +218,39 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                         return null;
                       },
                     ),
-                    CustomTextFormField(
-                      labelText: 'ブランド名',
-                      onTap: () {},
-                      controller: _brandController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'ブランド名を入力してください';
-                        }
-                        return null;
+                    // CustomTextFormField(
+                    //   labelText: 'ブランド名',
+                    //   onTap: () {},
+                    //   controller: _brandController,
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'ブランド名を入力してください';
+                    //     }
+                    //     return null;
+                    //   },
+                    // ),
+                    brandNames.when(
+                      data: (brands) {
+                        return CustomDropdownButtonFormField<String>(
+                          labelText: 'ブランド名',
+                          value: _brandController.text.isEmpty
+                              ? null
+                              : _brandController.text, // <-- ここを修正
+                          items: brands,
+                          onChanged: (value) {
+                            _brandController.text = value ?? '';
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'ブランド名を選択してください';
+                            }
+                            return null;
+                          },
+                          displayText: (value) => value,
+                        );
                       },
+                      loading: () => const CircularProgressIndicator(),
+                      error: (_, __) => const Text('ブランド名の取得に失敗しました'),
                     ),
                     CustomTextFormField(
                       labelText: '商品名',

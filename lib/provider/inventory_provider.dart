@@ -48,20 +48,7 @@ final inventoriesReferenceProvider = Provider.autoDispose((ref) {
 // 消さないとキャッシュに残っちゃうので、autoDisposeは使うこと多い
 // キャッシュしている情報を読みたい場合もある
 // final inventoriesProvider = StreamProvider.autoDispose<List<Inventory>>((ref) {
-//   final inventoriesReference =
-//       ref.watch(inventoriesReferenceProvider); // ユーザーIDの取得
-//   // userIdがnullだったら空を返す
-//   if (inventoriesReference == null) {
-//     return const Stream.empty();
-//   }
-//   return inventoriesReference.snapshots().map((query) {
-//     return query.docs.map((doc) {
-//       return Inventory.fromFirestore(doc);
-//     }).toList();
-//   });
-// });
-
-/// 全投稿データをstreamで提供するProvider
+// 全投稿データをstreamで提供するProvider
 final inventoriesProvider = StreamProvider.autoDispose<List<Inventory>>((ref) {
   final userReference = ref.watch(userReferenceProvider);
 
@@ -72,6 +59,31 @@ final inventoriesProvider = StreamProvider.autoDispose<List<Inventory>>((ref) {
   return const Stream.empty();
 });
 
+final brandNamesProvider =
+    FutureProvider.autoDispose<List<String>>((ref) async {
+  final userId = ref.watch(userIdProvider);
+  if (userId == null) throw Exception('User not logged in');
+  final userReference = ref.watch(userReferenceProvider);
+  final docSnapshot = await userReference!.get();
+
+  // Check if 'brandNames' field exists in the document
+  if (docSnapshot.exists && docSnapshot.data()!.containsKey('brandNames')) {
+    final data = docSnapshot.data()!['brandNames'];
+
+    if (data is! List<dynamic>) throw Exception('Invalid brand names data');
+
+    final brands = data.map((item) => item.toString()).toList();
+
+    if (brands.isEmpty) {
+      brands.add('ブランド名なし');
+    }
+
+    return List<String>.from(brands);
+  } else {
+    // Return a default value if 'brandNames' field does not exist
+    return ['設定からブランド名を追加してください'];
+  }
+});
 
 
 

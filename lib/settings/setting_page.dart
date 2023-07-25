@@ -24,7 +24,7 @@ class SettingsPage extends ConsumerWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => BrandsSettingsPage(userId!)),
+                    builder: (context) => BrandsSettingPage(userId!)),
               );
             },
           ),

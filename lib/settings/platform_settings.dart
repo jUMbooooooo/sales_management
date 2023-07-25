@@ -2,18 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PlatformSettingsPage extends StatefulWidget {
+class PlatformSettingsPage extends ConsumerStatefulWidget {
   final String userId;
 
-  const PlatformSettingsPage(this.userId, {super.key});
+  const PlatformSettingsPage(this.userId, {Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _PlatformSettingsPageState createState() => _PlatformSettingsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _PlatformSettingsPageState();
 }
 
-class _PlatformSettingsPageState extends State<PlatformSettingsPage> {
+class _PlatformSettingsPageState extends ConsumerState<PlatformSettingsPage> {
   final TextEditingController _platformController = TextEditingController();
   final TextEditingController _feeRateController = TextEditingController();
 

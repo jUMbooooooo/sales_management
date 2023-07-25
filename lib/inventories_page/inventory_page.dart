@@ -37,6 +37,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           title: const Text("在庫管理"),
           backgroundColor: const Color(0xFF222831),
           bottom: const TabBar(
+            isScrollable: true,
             tabs: <Widget>[
               Tab(text: '出品前'),
               Tab(text: '出品中'),
