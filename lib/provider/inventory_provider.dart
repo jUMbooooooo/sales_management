@@ -53,8 +53,9 @@ final inventoriesProvider = StreamProvider.autoDispose<List<Inventory>>((ref) {
   final userReference = ref.watch(userReferenceProvider);
 
   if (userReference != null) {
-    return userReference.collection('inventories').snapshots().map((query) =>
-        query.docs.map((doc) => Inventory.fromFirestore(doc)).toList());
+    return userReference.collection('inventories').snapshots().map((query) {
+      return query.docs.map((doc) => Inventory.fromFirestore(doc)).toList();
+    });
   }
   return const Stream.empty();
 });
@@ -74,16 +75,161 @@ final brandNamesProvider =
 
     final brands = data.map((item) => item.toString()).toList();
 
-    if (brands.isEmpty) {
-      brands.add('ブランド名なし');
-    }
-
+    // Don't add default value, just return the list as is
     return List<String>.from(brands);
   } else {
-    // Return a default value if 'brandNames' field does not exist
-    return ['設定からブランド名を追加してください'];
+    // Return an empty list if 'brandNames' field does not exist
+    return [];
   }
 });
+
+final supplierNamesProvider =
+    FutureProvider.autoDispose<List<String>>((ref) async {
+  final userId = ref.watch(userIdProvider);
+  if (userId == null) throw Exception('User not logged in');
+  final userReference = ref.watch(userReferenceProvider);
+  final collectionRef = userReference!.collection('supplier');
+
+  final querySnapshot = await collectionRef.get();
+  final documents = querySnapshot.docs;
+
+  // If no documents in the collection, return an empty list
+  if (documents.isEmpty) {
+    return [];
+  }
+
+  List<String> supplierNames = [];
+  for (var document in documents) {
+    if (document.exists && document.data().containsKey('supplierName')) {
+      final data = document.data()['supplierName'];
+      if (data is! String) throw Exception('Invalid supplier name data');
+      supplierNames.add(data);
+    }
+  }
+
+  // If no valid supplier names found, return an empty list
+  if (supplierNames.isEmpty) {
+    return [];
+  }
+
+  return List<String>.from(supplierNames);
+});
+
+final locationNameProvider =
+    FutureProvider.autoDispose<List<String>>((ref) async {
+  final userId = ref.watch(userIdProvider);
+  if (userId == null) throw Exception('User not logged in');
+  final userReference = ref.watch(userReferenceProvider);
+  final collectionRef = userReference!.collection('sellLocation');
+
+  final querySnapshot = await collectionRef.get();
+  final documents = querySnapshot.docs;
+
+  // If no documents in the collection, return an empty list
+  if (documents.isEmpty) {
+    return [];
+  }
+
+  List<String> locationName = [];
+  for (var document in documents) {
+    if (document.exists && document.data().containsKey('locationName')) {
+      final data = document.data()['locationName'];
+      if (data is! String) throw Exception('Invalid sellLocation name data');
+      locationName.add(data);
+    }
+  }
+
+  // If no valid supplier names found, return an empty list
+  if (locationName.isEmpty) {
+    return [];
+  }
+
+  return List<String>.from(locationName);
+});
+
+class SellLocation {
+  final double feeRate;
+  final String locationName;
+  final String id;
+
+  SellLocation(
+      {required this.feeRate, required this.locationName, required this.id});
+}
+
+final sellLocationsProvider =
+    FutureProvider.autoDispose<List<SellLocation>>((ref) async {
+  final userId = ref.watch(userIdProvider);
+  if (userId == null) throw Exception('User not logged in');
+  final userReference = ref.watch(userReferenceProvider);
+  final collectionRef = userReference!.collection('sellLocation');
+
+  final querySnapshot = await collectionRef.get();
+  final documents = querySnapshot.docs;
+
+  List<SellLocation> sellLocations = [];
+  for (var document in documents) {
+    if (document.exists &&
+        document.data().containsKey('feeRate') &&
+        document.data().containsKey('locationName')) {
+      final data = document.data();
+      final feeRate = (data!['feeRate'] as num).toDouble();
+      final locationName = data['locationName'] as String;
+
+      sellLocations.add(SellLocation(
+          feeRate: feeRate, locationName: locationName, id: document.id));
+    }
+  }
+
+  return sellLocations;
+});
+
+class SellInfo {
+  final double fee;
+  final double deposit;
+
+  SellInfo({required this.fee, required this.deposit});
+}
+
+// Assume you have a Provider that returns a specific Inventory object.
+final inventoryProvider =
+    Provider.family<Inventory, String>((ref, inventoryId) {
+  // Fetch the specific Inventory object using inventoryId.
+  // You might need to adjust this part according to your Firestore structure.
+  final userReference =
+      ref.watch(userReferenceProvider as AlwaysAliveProviderListenable);
+  if (userReference == null) throw Exception('User not logged in');
+
+  final docSnapshot =
+      userReference.collection('inventories').doc(inventoryId).get();
+
+  if (!docSnapshot.exists) throw Exception('Inventory not found');
+
+  return Inventory.fromFirestore(docSnapshot.data());
+});
+
+final sellInfoProvider = Provider.family<SellInfo, String>((ref, inventoryId) {
+  // Fetch the specific Inventory object.
+  final inventory = ref.watch(inventoryProvider(inventoryId));
+  final sellLocations = ref
+      .watch(sellLocationsProvider as AlwaysAliveProviderListenable)
+      .data
+      ?.value;
+
+  if (sellLocations == null) throw Exception('Sell locations not loaded');
+
+  // Match the sellLocation in the inventory with the one in sellLocations
+  final location = sellLocations
+      .firstWhere((loc) => loc.locationName == inventory.sellLocation);
+
+  final feeRate = location.feeRate;
+  final sellPrice = inventory.sellingPrice;
+
+  final fee = feeRate * sellPrice;
+  final deposit = sellPrice! - fee;
+
+  return SellInfo(fee: fee, deposit: deposit);
+});
+
 
 
 

@@ -1,13 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales_management_app/custom_widget/drawer.dart';
 import 'package:sales_management_app/inventory_class.dart';
-// import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'add_inventory.dart';
 import '../custom_widget/inventory_listview.dart';
-import '../sign_in_page.dart';
-import '../settings/setting_page.dart';
 
 // 在庫情報を表示するページ
 // 常に在庫は入れ替わるので、StatefulWidget

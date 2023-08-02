@@ -52,6 +52,11 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
   @override
   Widget build(BuildContext context) {
     final brandNames = ref.watch(brandNamesProvider);
+    final supplierName = ref.watch(supplierNamesProvider);
+    final locationName = ref.watch(locationNameProvider);
+    final sellLocations = ref.watch(sellLocationsProvider);
+    double? feeRate;
+
     // return MaterialApp
     // 新しい画面を作成するたびに改めて新しいMaterialAppを作成するのは適切ではない
     return Scaffold(
@@ -66,52 +71,79 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
           key: _addFormKey,
           child: Column(
             children: <Widget>[
-              IconButton(
-                onPressed: () async {
-                  // ステップ1 image_pickerを使って、画像を選択
+              imageUrl.isEmpty
+                  ? IconButton(
+                      onPressed: () async {
+                        // ステップ1 image_pickerを使って、画像を選択
 
-                  ImagePicker imagePicker = ImagePicker();
+                        ImagePicker imagePicker = ImagePicker();
 
-                  // XFileは　クロスプラットフォームでファイルを扱うためのクラス
-                  // Fileに比べて扱える機能が制限されている（クロスプラットフォームに合わせているため）
-                  XFile? file = await imagePicker.pickImage(
-                    source: ImageSource.gallery,
-                    maxWidth: 500,
-                  );
-                  print('${file?.path}');
+                        // XFileは　クロスプラットフォームでファイルを扱うためのクラス
+                        // Fileに比べて扱える機能が制限されている（クロスプラットフォームに合わせているため）
+                        XFile? file = await imagePicker.pickImage(
+                          source: ImageSource.gallery,
+                          maxWidth: 500,
+                        );
+                        print('${file?.path}');
 
-                  if (file == null) return;
+                        if (file == null) return;
 
-                  // ファイル名として、現在日時をミリ秒に直して文字列で使う
-                  // これで、一意にファイル名を指定することができる
-                  String uniqueFileName =
-                      DateTime.now().millisecondsSinceEpoch.toString();
+                        // ファイル名として、現在日時をミリ秒に直して文字列で使う
+                        // これで、一意にファイル名を指定することができる
+                        String uniqueFileName =
+                            DateTime.now().millisecondsSinceEpoch.toString();
 
-                  // ステップ2 Firebase Storageに画像をアップロードする
+                        // ステップ2 Firebase Storageに画像をアップロードする
 
-                  Reference referenceRoot = FirebaseStorage.instance.ref();
-                  Reference referenceDirImages = referenceRoot.child('images');
+                        Reference referenceRoot =
+                            FirebaseStorage.instance.ref();
+                        Reference referenceDirImages =
+                            referenceRoot.child('images');
 
-                  Reference referenceImageToUpload =
-                      referenceDirImages.child(uniqueFileName);
+                        Reference referenceImageToUpload =
+                            referenceDirImages.child(uniqueFileName);
 
-                  try {
-                    // 画像をアップロード
-                    await referenceImageToUpload.putFile(File(file.path));
+                        try {
+                          // 画像をアップロード
+                          await referenceImageToUpload.putFile(File(file.path));
 
-                    imageUrl = await referenceImageToUpload.getDownloadURL();
-                  } catch (error) {
-                    // エラーログを出力
-                    print('Failed to upload image: $error');
+                          imageUrl =
+                              await referenceImageToUpload.getDownloadURL();
+                          setState(() {}); // ここでsetStateを呼び出すことでUIが更新されます。
+                        } catch (error) {
+                          // エラーログを出力
+                          print('Failed to upload image: $error');
 
-                    // ユーザーへのフィードバック
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('画像のアップロードに失敗しました。')),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.camera_alt),
-              ),
+                          // ユーザーへのフィードバック
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('画像のアップロードに失敗しました。')),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.camera_alt),
+                    )
+                  : Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 10.0),
+                          child: Text(
+                            '商品画像',
+                            style: TextStyle(
+                              fontSize: 16.0, // フォントサイズ
+                              fontWeight: FontWeight.bold, // フォントウェイト
+                              color: Colors.black, // テキスト色
+                            ),
+                          ),
+                        ),
+                        Image.network(
+                          imageUrl,
+                          width: 150.0,
+                          height: 150.0,
+                          fit: BoxFit.cover,
+                        ),
+                      ],
+                    ),
+
               CustomTextFormField(
                 labelText: '日付',
                 readOnly: true,
@@ -215,16 +247,39 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                   return null;
                 },
               ),
-              CustomTextFormField(
-                labelText: '仕入先',
-                onTap: () {},
-                controller: _supplierController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '仕入先を入力してください';
-                  }
-                  return null;
+              // CustomTextFormField(
+              //   labelText: '仕入先',
+              //   onTap: () {},
+              //   controller: _supplierController,
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return '仕入先を入力してください';
+              //     }
+              //     return null;
+              //   },
+              // ),
+              supplierName.when(
+                data: (supplierNames) {
+                  return CustomDropdownButtonFormField<String>(
+                    labelText: '仕入先',
+                    value: _supplierController.text.isEmpty
+                        ? null
+                        : _supplierController.text, // <-- ここを修正,
+                    items: supplierNames,
+                    onChanged: (value) {
+                      _supplierController.text = value ?? '';
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '仕入先を選択してください';
+                      }
+                      return null;
+                    },
+                    displayText: (value) => value,
+                  );
                 },
+                loading: () => const CircularProgressIndicator(),
+                error: (_, __) => const Text('仕入先の取得に失敗しました'),
               ),
               CustomDropdownButtonFormField<InventoryStatus>(
                 labelText: '状況',
@@ -279,14 +334,51 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                   return null;
                 },
               ),
-              CustomTextFormField(
-                labelText: '販売場所',
-                onTap: () {},
-                controller: _sellLocationController,
-                validator: (value) {
-                  return null;
+
+              locationName.when(
+                data: (locationNames) {
+                  return sellLocations.when(
+                    data: (sellLocations) {
+                      return CustomDropdownButtonFormField<String>(
+                        labelText: '販売場所',
+                        value: _sellLocationController.text.isEmpty
+                            ? null
+                            : _sellLocationController.text,
+                        items: locationNames,
+                        onChanged: (value) {
+                          _sellLocationController.text = value ?? '';
+                          // 選択された販売場所に対応するSellLocationオブジェクトを探し、そのfeeRateを取得
+                          final selectedLocation = sellLocations.firstWhere(
+                              (location) => location.locationName == value);
+                          setState(() {
+                            feeRate = selectedLocation?.feeRate;
+                          });
+                          // feeRateをInventoryオブジェクトにセットする処理をここに書く
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '販売場所を選択してください';
+                          }
+                          return null;
+                        },
+                        displayText: (value) => value,
+                      );
+                    },
+                    loading: () => const CircularProgressIndicator(),
+                    error: (_, __) => const Text('販売場所の取得に失敗しました'),
+                  );
                 },
+                loading: () => const CircularProgressIndicator(),
+                error: (_, __) => const Text('販売場所の取得に失敗しました'),
               ),
+              // CustomTextFormField(
+              //   labelText: '販売場所',
+              //   onTap: () {},
+              //   controller: _sellLocationController,
+              //   validator: (value) {
+              //     return null;
+              //   },
+              // ),
               CustomTextFormField(
                 labelText: '送料',
                 suffixText: '円',
@@ -314,7 +406,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                   if (date != null) {
                     String formattedDate = DateFormat('yyyy-MM-dd')
                         .format(date); // 日付を適切な形式にフォーマット
-                    _purchasedDateontroller.text =
+                    _salesDateController.text =
                         formattedDate; // テキストフィールドに日付を設定
                   }
                 },
@@ -331,6 +423,8 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                 onPressed: () async {
                   try {
                     // double.parse()を安全にするためのnullチェック
+
+                    print('sellLocations[$sellLocations]');
 
                     if (_addFormKey.currentState!.validate()) {
                       // フォームが有効ならば何かを行う
@@ -376,10 +470,42 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                           ? Timestamp.fromDate(salesDateTime)
                           : null;
 
+                      int? salesPeriod = salesDateTimestamp != null &&
+                              purchasedDateTimestamp != null
+                          ? (salesDateTimestamp.toDate())
+                              .difference(purchasedDateTimestamp.toDate())
+                              .inDays
+                          : null;
+                      double? depositAmount =
+                          sellingPrice != null && shippingCost != null
+                              ? sellingPrice + shippingCost
+                              : null;
+                      double? salesFee =
+                          feeRate != null && depositAmount != null
+                              ? feeRate! * depositAmount
+                              : null;
+                      double? profit = depositAmount != null && salesFee != null
+                          ? depositAmount -
+                              salesFee -
+                              double.parse(_buyingPriceController.text) -
+                              double.parse(_otherCostsController.text)
+                          : null;
+                      double? profitRatio =
+                          profit != null && depositAmount != null
+                              ? profit / depositAmount
+                              : null;
+
                       final inventoriesReference =
                           ref.watch(inventoriesReferenceProvider);
 
                       final newDocumentReference = inventoriesReference?.doc();
+
+                      print('feeRate[$feeRate]');
+                      print('salesPeriod[$salesPeriod]');
+                      print('depositAmount[$depositAmount]');
+                      print('salesFee[$salesFee]');
+                      print('profit[$profit]');
+                      print('profitRatio[$profitRatio]');
 
                       // FIrestoreに追加するデータ
                       Inventory newInventory = Inventory(
@@ -397,7 +523,13 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         inspection: false,
                         purchased: false,
                         purchasedDate: purchasedDateTimestamp,
-                        selligPrice: sellingPrice,
+                        salesPeriod: salesPeriod,
+                        depositAmount: depositAmount,
+                        feeRate: feeRate,
+                        salesFee: salesFee,
+                        profit: profit,
+                        profitRatio: profitRatio,
+                        sellingPrice: sellingPrice,
                         // selligPrice: double.parse(_sellingPriceController.text),
                         sellLocation: _sellLocationController.text,
                         shippingCost: shippingCost,
@@ -412,6 +544,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         // データの追加が成功したら前の画面に戻る
                         Navigator.pop(context);
                         // TextFormFieldの値をリセットする
+                        imageUrl = '';
                         _dateController.clear();
                         _idController.clear();
                         // _selectedBrand.value = null;

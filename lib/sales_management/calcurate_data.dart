@@ -6,7 +6,9 @@ class SalesAnalytics {
     double totalSales = 0; //売上
     double totalCosts = 0; //売上原価
     // 新しく追加される計算部分
-    int salesCount = inventories.where((inv) => inv.selligPrice != null).length;
+    int salesCount = inventories
+        .where((inv) => inv.status == InventoryStatus.transactionComplete)
+        .length;
     double avgSalesPrice = totalSales / salesCount;
 
     // 入金額などの情報はInventoryクラスには存在しないので、ここでは一時的に0とします
@@ -39,8 +41,8 @@ class SalesAnalytics {
     for (final inventory in inventories) {
       if (inventory.date.toDate().isAfter(start) &&
           inventory.date.toDate().isBefore(end)) {
-        if (inventory.selligPrice != null) {
-          totalSales += inventory.selligPrice!;
+        if (inventory.sellingPrice != null) {
+          totalSales += inventory.sellingPrice!;
         }
         totalCosts += inventory.buyingPrice + inventory.otherCosts;
       }

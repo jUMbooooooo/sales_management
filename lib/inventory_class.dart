@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // 在庫の状態を管理するenum関数
 enum InventoryStatus {
@@ -39,10 +40,16 @@ class Inventory {
     required this.inspection,
     required this.purchased,
     this.purchasedDate,
-    this.selligPrice,
+    this.sellingPrice,
     this.sellLocation,
     this.shippingCost,
     this.salesDate,
+    this.salesFee, //販売手数料
+    this.depositAmount, //入金額
+    this.profit, //粗利
+    this.profitRatio, //粗利益率
+    this.salesPeriod, //販売期間
+    this.feeRate, //手数料率
     required this.revenue,
     required this.reference,
   });
@@ -52,6 +59,9 @@ class Inventory {
   factory Inventory.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final map = snapshot.data()!;
+
+    // feeRateをFirestoreから取得します
+    double? feeRate = map['feeRate'] ?? 0.0;
 
     return Inventory(
       date: map['date'],
@@ -65,11 +75,17 @@ class Inventory {
       inspection: map['inspection'],
       purchased: map['purchased'],
       purchasedDate: map['purchasedDate'],
-      selligPrice: map['selligPrice'],
+      sellingPrice: map['sellingPrice'],
       sellLocation: map['sellLocation'],
       shippingCost: map['shippingCost'],
       salesDate: map['salesDate'],
+      salesPeriod: map['salesPeriod'], //販売期間
+      depositAmount: map['depositAmount'], //入金額
+      salesFee: map['salesFee'], //販売手数料
+      profit: map['profit'], //粗利
+      profitRatio: map['profitRatio'], //粗利益率
       revenue: map['revenue'],
+      feeRate: feeRate,
       status: InventoryStatus.values.firstWhere(
           (e) => e.toString() == 'InventoryStatus.${map['status']}'),
       // リファレンスは、コレクションとドキュメントIDの組み合わせをパスコードで示したもの
@@ -91,12 +107,18 @@ class Inventory {
       'inspection': inspection,
       'purchased': purchased,
       'purchasedDate': purchasedDate,
-      'selligPrice': selligPrice,
+      'sellingPrice': sellingPrice,
       'sellLocation': sellLocation,
       'shippingCost': shippingCost,
       'salesDate': salesDate,
+      'salesPeriod': salesPeriod,
+      'depositAmount': depositAmount,
+      'salesFee': salesFee,
+      'profit': profit,
+      'profitRatio': profitRatio,
       'revenue': revenue,
       'status': status.toString().split('.').last,
+      'feeRate': feeRate,
     };
   }
 
@@ -111,10 +133,60 @@ class Inventory {
   late bool inspection; //検品チェック(状態として)
   late bool purchased; //購入チェック(状態として)
   late Timestamp? purchasedDate; //購入日時
-  late double? selligPrice; //販売価格
+  late double? sellingPrice; //販売価格
   late String? sellLocation; //販売先
+  late double? feeRate;
   late double? shippingCost; //販売時送料
   late Timestamp? salesDate; //売上日時
+  late int? salesPeriod; //販売期間
+  late double? depositAmount;
+  late double? salesFee;
+  late double? profit;
+  late double? profitRatio;
   late bool revenue; //売上
   final DocumentReference reference; //リファレンス
+
+  void setSellLocation(String locationName) async {
+    // Set the sell location
+    sellLocation = locationName;
+
+    // Fetch the corresponding fee rate from Firestore
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final currentUserId = currentUser.uid;
+    final userReference =
+        FirebaseFirestore.instance.collection('users').doc(currentUserId);
+
+    final querySnapshot = await userReference
+        .collection('sellLocation')
+        .where('locationName', isEqualTo: locationName)
+        .get();
+
+    final documents = querySnapshot.docs;
+
+    if (documents.isNotEmpty) {
+      final document = documents[0];
+      feeRate = document.data()['feeRate'] ?? 0.0;
+    }
+  }
+
+  void calculateValues() {
+    // 販売手数料の計算
+    salesFee = sellingPrice! * feeRate!;
+
+    // 入金額の計算
+    depositAmount = sellingPrice! - salesFee!;
+
+    // 粗利の計算
+    profit =
+        depositAmount! - (buyingPrice + otherCosts + (shippingCost ?? 0.0));
+
+    // 粗利益率の計算
+    profitRatio = (profit! / depositAmount!) * 100;
+
+    // 販売期間の計算 (Duration オブジェクトを使用)
+    if (salesDate != null && purchasedDate != null) {
+      salesPeriod =
+          salesDate!.toDate().difference(purchasedDate!.toDate()) as int?;
+    }
+  }
 }

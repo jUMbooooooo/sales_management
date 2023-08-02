@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sales_management_app/inventory_class.dart';
 import 'package:sales_management_app/provider/inventory_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../inventories_page/edit_inventory.dart';
 
 class InventoryList extends ConsumerWidget {
@@ -135,27 +134,49 @@ class InventoryList extends ConsumerWidget {
                                       ),
                                     ),
                                     Text(
-                                      '${doc.buyingPrice.toInt()} 円',
+                                      '${doc.buyingPrice.toInt() + doc.otherCosts.toInt()} 円',
                                       style: const TextStyle(fontSize: 12.0),
                                     ),
                                   ],
                                 ),
-                                // Padding(padding: EdgeInsets.all(8.0)),
-                                // Column(
-                                //   children: [
-                                //     Text(
-                                //       '販売価格',
-                                //       style: const TextStyle(
-                                //         fontWeight: FontWeight.w500,
-                                //         fontSize: 11.0,
-                                //       ),
-                                //     ),
-                                //     Text(
-                                //       '${doc.buyingPrice.toInt()} 円',
-                                //       style: const TextStyle(fontSize: 12.0),
-                                //     ),
-                                //   ],
-                                // ),
+                                Padding(padding: EdgeInsets.all(8.0)),
+                                Column(
+                                  children: [
+                                    Text(
+                                      doc.sellingPrice == null
+                                          ? 'メルカリ損益分岐価格'
+                                          : '販売価格',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 11.0,
+                                      ),
+                                    ),
+                                    Text(
+                                      doc.sellingPrice == null
+                                          ? '${((doc.buyingPrice + 520) / 0.9).toInt()} 円'
+                                          : '${doc.sellingPrice?.toInt()} 円',
+                                      style: const TextStyle(fontSize: 12.0),
+                                    ),
+                                  ],
+                                ),
+                                if (doc.sellingPrice != null)
+                                  Padding(padding: EdgeInsets.all(8.0)),
+                                if (doc.sellingPrice != null)
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '粗利益',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 11.0,
+                                        ),
+                                      ),
+                                      Text(
+                                        '$doc.profit?',
+                                        style: const TextStyle(fontSize: 12.0),
+                                      ),
+                                    ],
+                                  ),
                               ],
                             ),
                           ],
