@@ -1,6 +1,7 @@
 // 編集したい在庫のドキュメントIDを持つ新しいStatefulWidgetを作成
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -237,11 +238,12 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                       data: (brands) {
                         return CustomDropdownButtonFormField<String>(
                           labelText: 'ブランド名',
-                          value: brands.contains(_brandController.text)
-                              ? _brandController.text
-                              : null, // <-- 修正した箇所
+                          value: _brandController.text.isEmpty
+                              ? null
+                              : _brandController.text, // <-- ここを修正
                           items: brands,
                           onChanged: (value) {
+                            print('brandNames: $brandNames');
                             _brandController.text = value ?? '';
                           },
                           validator: (value) {
@@ -315,6 +317,7 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                               : _supplierController.text, // <-- ここを修正,
                           items: supplierNames,
                           onChanged: (value) {
+                            print('supplierNames: $supplierNames');
                             _supplierController.text = value ?? '';
                           },
                           validator: (value) {
@@ -410,31 +413,56 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                       data: (locationNames) {
                         return sellLocations.when(
                           data: (sellLocations) {
-                            return CustomDropdownButtonFormField<String>(
-                              labelText: '販売場所',
-                              value: _sellLocationController.text.isEmpty
-                                  ? null
-                                  : _sellLocationController.text,
-                              items: locationNames,
-                              onChanged: (value) {
-                                _sellLocationController.text = value ?? '';
-                                // 選択された販売場所に対応するSellLocationオブジェクトを探し、そのfeeRateを取得
-                                final selectedLocation =
-                                    sellLocations.firstWhere((location) =>
-                                        location.locationName == value);
-                                setState(() {
-                                  feeRate = selectedLocation?.feeRate;
+                            return FutureBuilder(
+                                future: _sellLocationController.text.isEmpty
+                                    ? null
+                                    : Future.value(
+                                        _sellLocationController.text),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<String> snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else {
+                                    return CustomDropdownButtonFormField<
+                                        String>(
+                                      labelText: '販売場所',
+                                      value: snapshot.data,
+                                      items: locationNames,
+                                      onChanged: (value) async {
+                                        print('locationNames: $locationNames');
+                                        print('sellLocations: $sellLocations');
+                                        _sellLocationController.text =
+                                            value ?? '';
+                                        // 選択された販売場所に対応するSellLocationオブジェクトを探し、そのfeeRateを取得
+                                        print("Value: $value"); // 選択されたvalueを出力
+
+                                        final selectedLocation = sellLocations
+                                            .firstWhereOrNull((location) {
+                                          print(
+                                              "Checking location: ${location.locationName}"); // 確認中のlocationNameを出力
+                                          return location.locationName == value;
+                                        });
+
+                                        if (mounted) {
+                                          setState(() {
+                                            feeRate = selectedLocation?.feeRate;
+                                          });
+                                        }
+
+                                        print('feeRate: $feeRate'); // ここを追加
+                                        // feeRateをInventoryオブジェクトにセットする処理をここに書く
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return '販売場所を選択してください';
+                                        }
+                                        return null;
+                                      },
+                                      displayText: (value) => value,
+                                    );
+                                  }
                                 });
-                                // feeRateをInventoryオブジェクトにセットする処理をここに書く
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return '販売場所を選択してください';
-                                }
-                                return null;
-                              },
-                              displayText: (value) => value,
-                            );
                           },
                           loading: () => const CircularProgressIndicator(),
                           error: (_, __) => const Text('販売場所の取得に失敗しました'),
@@ -507,6 +535,8 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                                 ? double.parse(_shippingCostsController.text)
                                 : null;
 
+                            // String image = await uploadImage();
+
                             DateTime dateTime = DateFormat('yyyy-MM-dd')
                                 .parse(_dateController.text);
 
@@ -535,38 +565,58 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                                     ? Timestamp.fromDate(salesDateTime)
                                     : null;
 
+                            int? salesPeriod = salesDateTimestamp != null
+                                ? (salesDateTimestamp.toDate())
+                                    .difference(dateTimestamp.toDate())
+                                    .inDays
+                                : null;
+
+                            // feeRateを再度計算
+                            feeRate = sellLocations.maybeWhen(
+                              data: (sellLocationsList) {
+                                final selectedLocation =
+                                    sellLocationsList.firstWhereOrNull(
+                                  (location) =>
+                                      location.locationName ==
+                                      _sellLocationController.text,
+                                );
+                                return selectedLocation?.feeRate;
+                              },
+                              orElse: () => null,
+                            );
+
+                            // 入金額＝販売価格＊(1-手数料率)-販売時送料
+                            double? depositAmount = sellingPrice != null &&
+                                    feeRate != null &&
+                                    shippingCost != null
+                                ? sellingPrice * (1 - feeRate!) - shippingCost
+                                : null;
+
+                            // 手数料＝販売価格＊手数料率
+                            double? salesFee =
+                                feeRate != null && sellingPrice != null
+                                    ? sellingPrice * feeRate!
+                                    : null;
+
+                            // 粗利＝入金額ー仕入れ額
+                            double? profit = depositAmount != null &&
+                                    salesFee != null
+                                ? depositAmount -
+                                    double.parse(_buyingPriceController.text) -
+                                    double.parse(_otherCostsController.text)
+                                : null;
+
+                            // 粗利率＝利益/販売価格
+                            double? profitRatio =
+                                profit != null && sellingPrice != null
+                                    ? profit / sellingPrice
+                                    : null;
+
                             final inventoriesReference =
                                 ref.watch(inventoriesReferenceProvider);
 
                             final editDocumentReference =
                                 inventoriesReference?.doc();
-
-                            int? salesPeriod = salesDateTimestamp != null &&
-                                    purchasedDateTimestamp != null
-                                ? salesDateTimestamp
-                                    .toDate()
-                                    .difference(purchasedDateTimestamp.toDate())
-                                    .inDays
-                                : null;
-                            double? depositAmount =
-                                sellingPrice != null && shippingCost != null
-                                    ? sellingPrice + shippingCost
-                                    : null;
-                            double? salesFee =
-                                feeRate != null && depositAmount != null
-                                    ? feeRate! * depositAmount
-                                    : null;
-                            double? profit = depositAmount != null &&
-                                    salesFee != null
-                                ? depositAmount -
-                                    salesFee -
-                                    double.parse(_buyingPriceController.text) -
-                                    double.parse(_otherCostsController.text)
-                                : null;
-                            double? profitRatio =
-                                profit != null && depositAmount != null
-                                    ? profit / depositAmount
-                                    : null;
 
                             // InventoryクラスのインスタンスupdateInventoryを作成
                             Inventory updatedInventory = Inventory(
@@ -584,11 +634,10 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                               reference: editDocumentReference
                                   as DocumentReference<Object?>,
                               status: _statusController.value!,
-                              inspection: false,
-                              purchased: false,
                               purchasedDate: purchasedDateTimestamp,
                               salesPeriod: salesPeriod,
                               depositAmount: depositAmount,
+                              feeRate: feeRate,
                               salesFee: salesFee,
                               profit: profit,
                               profitRatio: profitRatio,
@@ -599,8 +648,6 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                               // shippingCost:
                               //     double.parse(_shippingCostsController.text),
                               salesDate: salesDateTimestamp,
-                              revenue: false,
-                              //コンストラクタ
                             );
 
                             // Firestoreのドキュメントを更新

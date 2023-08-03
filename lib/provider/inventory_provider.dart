@@ -147,6 +147,15 @@ final locationNameProvider =
   return List<String>.from(locationName);
 });
 
+// class SellLocation {
+//   final double feeRate;
+//   final String locationName;
+//   final String id;
+
+//   SellLocation(
+//       {required this.feeRate, required this.locationName, required this.id});
+// }
+
 class SellLocation {
   final double feeRate;
   final String locationName;
@@ -154,6 +163,11 @@ class SellLocation {
 
   SellLocation(
       {required this.feeRate, required this.locationName, required this.id});
+
+  @override
+  String toString() {
+    return 'SellLocation{feeRate: $feeRate, locationName: $locationName, id: $id}';
+  }
 }
 
 final sellLocationsProvider =
@@ -172,13 +186,15 @@ final sellLocationsProvider =
         document.data().containsKey('feeRate') &&
         document.data().containsKey('locationName')) {
       final data = document.data();
-      final feeRate = (data!['feeRate'] as num).toDouble();
+      final feeRate = (data['feeRate'] as num).toDouble();
       final locationName = data['locationName'] as String;
 
       sellLocations.add(SellLocation(
           feeRate: feeRate, locationName: locationName, id: document.id));
     }
   }
+
+  print('sellLocations: $sellLocations'); // Add this line
 
   return sellLocations;
 });

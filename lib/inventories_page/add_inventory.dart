@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sales_management_app/provider/inventory_provider.dart';
+import 'package:collection/collection.dart';
 
 import '../inventory_class.dart';
 import '../custom_widget/add_inventory_field.dart';
@@ -194,6 +195,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         : _brandController.text, // <-- ここを修正
                     items: brands,
                     onChanged: (value) {
+                      print('brandNames: $brandNames');
                       _brandController.text = value ?? '';
                     },
                     validator: (value) {
@@ -267,6 +269,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         : _supplierController.text, // <-- ここを修正,
                     items: supplierNames,
                     onChanged: (value) {
+                      print('supplierNames: $supplierNames');
                       _supplierController.text = value ?? '';
                     },
                     validator: (value) {
@@ -345,14 +348,27 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                             ? null
                             : _sellLocationController.text,
                         items: locationNames,
-                        onChanged: (value) {
+                        onChanged: (value) async {
+                          print('locationNames: $locationNames');
+                          print('sellLocations: $sellLocations');
                           _sellLocationController.text = value ?? '';
                           // 選択された販売場所に対応するSellLocationオブジェクトを探し、そのfeeRateを取得
-                          final selectedLocation = sellLocations.firstWhere(
-                              (location) => location.locationName == value);
-                          setState(() {
-                            feeRate = selectedLocation?.feeRate;
+                          print("Value: $value"); // 選択されたvalueを出力
+
+                          final selectedLocation =
+                              sellLocations.firstWhereOrNull((location) {
+                            print(
+                                "Checking location: ${location.locationName}"); // 確認中のlocationNameを出力
+                            return location.locationName == value;
                           });
+
+                          await Future(() {
+                            setState(() {
+                              feeRate = selectedLocation?.feeRate;
+                            });
+                          });
+
+                          print('feeRate: $feeRate'); // ここを追加
                           // feeRateをInventoryオブジェクトにセットする処理をここに書く
                         },
                         validator: (value) {
@@ -424,8 +440,6 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                   try {
                     // double.parse()を安全にするためのnullチェック
 
-                    print('sellLocations[$sellLocations]');
-
                     if (_addFormKey.currentState!.validate()) {
                       // フォームが有効ならば何かを行う
                       // 例えば、データをサーバに送信するなど
@@ -470,29 +484,49 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                           ? Timestamp.fromDate(salesDateTime)
                           : null;
 
-                      int? salesPeriod = salesDateTimestamp != null &&
-                              purchasedDateTimestamp != null
+                      int? salesPeriod = salesDateTimestamp != null
                           ? (salesDateTimestamp.toDate())
-                              .difference(purchasedDateTimestamp.toDate())
+                              .difference(dateTimestamp.toDate())
                               .inDays
                           : null;
-                      double? depositAmount =
-                          sellingPrice != null && shippingCost != null
-                              ? sellingPrice + shippingCost
-                              : null;
-                      double? salesFee =
-                          feeRate != null && depositAmount != null
-                              ? feeRate! * depositAmount
-                              : null;
+
+                      // feeRateを再度計算
+                      feeRate = sellLocations.maybeWhen(
+                        data: (sellLocationsList) {
+                          final selectedLocation =
+                              sellLocationsList.firstWhereOrNull(
+                            (location) =>
+                                location.locationName ==
+                                _sellLocationController.text,
+                          );
+                          return selectedLocation?.feeRate;
+                        },
+                        orElse: () => null,
+                      );
+
+                      // 入金額＝販売価格＊(1-手数料率)-販売時送料
+                      double? depositAmount = sellingPrice != null &&
+                              feeRate != null &&
+                              shippingCost != null
+                          ? sellingPrice * (1 - feeRate!) - shippingCost
+                          : null;
+
+                      // 手数料＝販売価格＊手数料率
+                      double? salesFee = feeRate != null && sellingPrice != null
+                          ? sellingPrice * feeRate!
+                          : null;
+
+                      // 粗利＝入金額ー仕入れ額
                       double? profit = depositAmount != null && salesFee != null
                           ? depositAmount -
-                              salesFee -
                               double.parse(_buyingPriceController.text) -
                               double.parse(_otherCostsController.text)
                           : null;
+
+                      // 粗利率＝利益/販売価格
                       double? profitRatio =
-                          profit != null && depositAmount != null
-                              ? profit / depositAmount
+                          profit != null && sellingPrice != null
+                              ? profit / sellingPrice
                               : null;
 
                       final inventoriesReference =
@@ -500,6 +534,7 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
 
                       final newDocumentReference = inventoriesReference?.doc();
 
+                      print('sellLocations[$sellLocations]');
                       print('feeRate[$feeRate]');
                       print('salesPeriod[$salesPeriod]');
                       print('depositAmount[$depositAmount]');
@@ -520,8 +555,6 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         reference:
                             newDocumentReference as DocumentReference<Object?>,
                         status: _statusController.value!,
-                        inspection: false,
-                        purchased: false,
                         purchasedDate: purchasedDateTimestamp,
                         salesPeriod: salesPeriod,
                         depositAmount: depositAmount,
@@ -536,7 +569,6 @@ class _AddInventoryState extends ConsumerState<AddInventory> {
                         // shippingCost:
                         //     double.parse(_shippingCostsController.text),
                         salesDate: salesDateTimestamp,
-                        revenue: false,
                       );
 
                       // Firestoreにデータを追加

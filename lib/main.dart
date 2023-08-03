@@ -36,17 +36,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// var userReference =
-//     FirebaseFirestore.instance.collection('users').doc(currentUserId);
-
-// // firestoreからのやり取りは全てMap型
-// // 取得するときにInventoryクラスに
-// // 格納する時はInventoryクラスからMapに
-// var inventoriesReference = userReference
-//     .collection('inventories')
-//     .withConverter<Inventory>(fromFirestore: ((snapshot, _) {
-//   return Inventory.fromFirestore(snapshot);
-// }), toFirestore: ((value, _) {
-//   return value.toMap();
-// }));

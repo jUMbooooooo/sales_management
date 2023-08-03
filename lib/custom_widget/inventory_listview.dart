@@ -125,6 +125,8 @@ class InventoryList extends ConsumerWidget {
                             Row(
                               children: [
                                 Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const Text(
                                       '仕入れ価格',
@@ -141,6 +143,8 @@ class InventoryList extends ConsumerWidget {
                                 ),
                                 Padding(padding: EdgeInsets.all(8.0)),
                                 Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
                                       doc.sellingPrice == null
@@ -159,10 +163,12 @@ class InventoryList extends ConsumerWidget {
                                     ),
                                   ],
                                 ),
-                                if (doc.sellingPrice != null)
-                                  Padding(padding: EdgeInsets.all(8.0)),
+                                Padding(padding: EdgeInsets.all(8.0)),
                                 if (doc.sellingPrice != null)
                                   Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
                                         '粗利益',
@@ -172,7 +178,28 @@ class InventoryList extends ConsumerWidget {
                                         ),
                                       ),
                                       Text(
-                                        '$doc.profit?',
+                                        '${doc.profit != null ? doc.profit!.round() : 'N/A'}円',
+                                        style: const TextStyle(fontSize: 12.0),
+                                      ),
+                                    ],
+                                  ),
+                                Padding(padding: EdgeInsets.all(8.0)),
+                                if (doc.sellingPrice != null)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '利益率',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 11.0,
+                                        ),
+                                      ),
+                                      Padding(padding: EdgeInsets.all(1.5)),
+                                      Text(
+                                        '${doc.profitRatio! * 100} %',
                                         style: const TextStyle(fontSize: 12.0),
                                       ),
                                     ],

@@ -37,8 +37,6 @@ class Inventory {
     required this.otherCosts,
     required this.supplier,
     required this.status,
-    required this.inspection,
-    required this.purchased,
     this.purchasedDate,
     this.sellingPrice,
     this.sellLocation,
@@ -50,7 +48,6 @@ class Inventory {
     this.profitRatio, //粗利益率
     this.salesPeriod, //販売期間
     this.feeRate, //手数料率
-    required this.revenue,
     required this.reference,
   });
 
@@ -72,8 +69,6 @@ class Inventory {
       buyingPrice: map['buyingPrice'],
       otherCosts: map['otherCosts'],
       supplier: map['supplier'],
-      inspection: map['inspection'],
-      purchased: map['purchased'],
       purchasedDate: map['purchasedDate'],
       sellingPrice: map['sellingPrice'],
       sellLocation: map['sellLocation'],
@@ -84,7 +79,6 @@ class Inventory {
       salesFee: map['salesFee'], //販売手数料
       profit: map['profit'], //粗利
       profitRatio: map['profitRatio'], //粗利益率
-      revenue: map['revenue'],
       feeRate: feeRate,
       status: InventoryStatus.values.firstWhere(
           (e) => e.toString() == 'InventoryStatus.${map['status']}'),
@@ -104,8 +98,6 @@ class Inventory {
       'buyingPrice': buyingPrice,
       'otherCosts': otherCosts,
       'supplier': supplier,
-      'inspection': inspection,
-      'purchased': purchased,
       'purchasedDate': purchasedDate,
       'sellingPrice': sellingPrice,
       'sellLocation': sellLocation,
@@ -116,7 +108,6 @@ class Inventory {
       'salesFee': salesFee,
       'profit': profit,
       'profitRatio': profitRatio,
-      'revenue': revenue,
       'status': status.toString().split('.').last,
       'feeRate': feeRate,
     };
@@ -130,8 +121,6 @@ class Inventory {
   late double buyingPrice; //仕入れ価格
   late double otherCosts; //仕入れ送料+その他コスト
   late String supplier; //仕入れ先
-  late bool inspection; //検品チェック(状態として)
-  late bool purchased; //購入チェック(状態として)
   late Timestamp? purchasedDate; //購入日時
   late double? sellingPrice; //販売価格
   late String? sellLocation; //販売先
@@ -139,11 +128,10 @@ class Inventory {
   late double? shippingCost; //販売時送料
   late Timestamp? salesDate; //売上日時
   late int? salesPeriod; //販売期間
-  late double? depositAmount;
+  late double? depositAmount; //入金額
   late double? salesFee;
   late double? profit;
   late double? profitRatio;
-  late bool revenue; //売上
   final DocumentReference reference; //リファレンス
 
   void setSellLocation(String locationName) async {
