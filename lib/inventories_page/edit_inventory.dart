@@ -45,11 +45,14 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
       TextEditingController();
   final TextEditingController _salesDateController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    fetchAndSetData(); // データを取得してTextEditingControllerにセットする
-  }
+  // initStateは、ビルド関数が呼ばれる前に必ず呼ばれる
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchAndSetData(); // データを取得してTextEditingControllerにセットする
+  // }
+
+  late final fetchAndSetDataResult = fetchAndSetData();
 
   Future<void> fetchAndSetData() async {
     try {
@@ -114,8 +117,12 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
     final sellLocations = ref.watch(sellLocationsProvider);
     double? feeRate;
 
+    // FututreBuilderの中に、Future型関数を入れちゃいけない
+    // future: の中に直接入れてはいけない→一度変数に入れてfuture渡す
     return FutureBuilder<void>(
-      future: fetchAndSetData(),
+      // 今の所意味ない
+      //
+      future: fetchAndSetDataResult,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -413,56 +420,53 @@ class _EditInventoryState extends ConsumerState<EditInventory> {
                       data: (locationNames) {
                         return sellLocations.when(
                           data: (sellLocations) {
-                            return FutureBuilder(
-                                future: _sellLocationController.text.isEmpty
-                                    ? null
-                                    : Future.value(
-                                        _sellLocationController.text),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<String> snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
-                                  } else {
-                                    return CustomDropdownButtonFormField<
-                                        String>(
-                                      labelText: '販売場所',
-                                      value: snapshot.data,
-                                      items: locationNames,
-                                      onChanged: (value) async {
-                                        print('locationNames: $locationNames');
-                                        print('sellLocations: $sellLocations');
-                                        _sellLocationController.text =
-                                            value ?? '';
-                                        // 選択された販売場所に対応するSellLocationオブジェクトを探し、そのfeeRateを取得
-                                        print("Value: $value"); // 選択されたvalueを出力
+                            // FutureBuilderは意味ない
+                            // 処理中のエラーや処理完了を検知→その度に再ビルドしてくれる
+                            // Future型は処理中。処理完了したら、指定したその型になる
+                            // return FutureBuilder(
+                            //     // 時間がかかるものを与えるのが future:
+                            //     future: _sellLocationController.text.isEmpty
+                            //         ? null
+                            //         : Future.value(
+                            //             _sellLocationController.text),
+                            //     builder: (BuildContext context,
+                            //         AsyncSnapshot<String> snapshot) {
+                            return CustomDropdownButtonFormField<String>(
+                              labelText: '販売場所',
+                              value: _sellLocationController.text,
+                              items: locationNames,
+                              onChanged: (value) async {
+                                print('locationNames: $locationNames');
+                                print('sellLocations: $sellLocations');
+                                _sellLocationController.text = value ?? '';
+                                // 選択された販売場所に対応するSellLocationオブジェクトを探し、そのfeeRateを取得
+                                print("Value: $value"); // 選択されたvalueを出力
 
-                                        final selectedLocation = sellLocations
-                                            .firstWhereOrNull((location) {
-                                          print(
-                                              "Checking location: ${location.locationName}"); // 確認中のlocationNameを出力
-                                          return location.locationName == value;
-                                        });
-
-                                        if (mounted) {
-                                          setState(() {
-                                            feeRate = selectedLocation?.feeRate;
-                                          });
-                                        }
-
-                                        print('feeRate: $feeRate'); // ここを追加
-                                        // feeRateをInventoryオブジェクトにセットする処理をここに書く
-                                      },
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return '販売場所を選択してください';
-                                        }
-                                        return null;
-                                      },
-                                      displayText: (value) => value,
-                                    );
-                                  }
+                                final selectedLocation =
+                                    sellLocations.firstWhereOrNull((location) {
+                                  print(
+                                      "Checking location: ${location.locationName}"); // 確認中のlocationNameを出力
+                                  return location.locationName == value;
                                 });
+
+                                if (mounted) {
+                                  setState(() {
+                                    feeRate = selectedLocation?.feeRate;
+                                  });
+                                }
+
+                                print('feeRate: $feeRate'); // ここを追加
+                                // feeRateをInventoryオブジェクトにセットする処理をここに書く
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return '販売場所を選択してください';
+                                }
+                                return null;
+                              },
+                              displayText: (value) => value,
+                            );
+                            // });
                           },
                           loading: () => const CircularProgressIndicator(),
                           error: (_, __) => const Text('販売場所の取得に失敗しました'),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sales_management_app/custom_widget/drawer.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class SalesManagementPage extends ConsumerWidget {
   const SalesManagementPage({super.key});
