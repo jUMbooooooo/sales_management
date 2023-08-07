@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'base_page.dart';
 
 // User currentUser = FirebaseAuth.instance.currentUser!;
@@ -17,6 +18,22 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  String appVersion = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // アプリのバージョンを取得
+    getAppVersion();
+  }
+
+  void getAppVersion() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      appVersion = packageInfo.version;
+    });
+  }
+
   // 既存のログイン情報をクリア
   Future<void> logout() async {
     // Googleは別個でログアウトしないと次にログインするときにアカウント選択が表示されない
@@ -46,6 +63,7 @@ class _SignInPageState extends State<SignInPage> {
     // var currentUserId = currentUser.uid;
 
     // print('ユーザーネーム[$currentUserName]'); // userId と displayName を確認します
+    print('appVersion[$appVersion]');
   }
 
   @override
@@ -58,38 +76,41 @@ class _SignInPageState extends State<SignInPage> {
         ),
         backgroundColor: const Color(0xFF222831),
       ),
-      // appBar: AppBar(
-      //   title: const Text('せどりマネージャー'),
-      //   backgroundColor: const Color(0xFF222831),
-      // ),
-      body: Center(
-        child: ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(const Color(0xFF222831)),
-          ),
-          child: const Text('Googleアカウントでサインイン'),
-          onPressed: () async {
-            await logout();
-            await signInWithGoogle();
-            // ログインが成功すると FirebaseAuth.instance.currentUser にログイン中のユーザーの情報が入ります
-            // print(FirebaseAuth.instance.currentUser?.displayName);
+      body: Stack(
+        children: [
+          Center(
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(const Color(0xFF222831)),
+              ),
+              child: const Text('Googleアカウントでサインイン'),
+              onPressed: () async {
+                await logout();
+                await signInWithGoogle();
 
-            if (mounted) {
-              // ユーザーが正常に認証され、ユーザー情報が得られたページへ遷移
-              // print('ユーザーネーム[$currentUserName]');
-
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (cotext) {
-                  return const BasePage(
-                    title: '',
+                if (mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (cotext) {
+                      return const BasePage(
+                        title: '',
+                      );
+                    }),
+                    (route) => false,
                   );
-                }),
-                (route) => false,
-              );
-            }
-          },
-        ),
+                }
+              },
+            ),
+          ),
+          Positioned(
+            right: 10,
+            bottom: 10,
+            child: Text(
+              'version: $appVersion',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+        ],
       ),
     );
   }
