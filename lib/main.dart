@@ -134,6 +134,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(),
       home: const SignInPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
